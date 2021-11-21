@@ -7,9 +7,10 @@ import (
 )
 
 func Server(ip string) {
+	ip = ip + ":80"
 	server := http.NewServeMux()
 	server.HandleFunc("/", StaticHandler)
-	server.HandleFunc("/chat", chatHandler)     // endpoint for chat UI
+	// server.HandleFunc("/chat", chatHandler)     // endpoint for chat UI
 	server.HandleFunc("/add-user", userHandler) // endpoint to add user
 	log.Printf("server is listening on %s", ip)
 	log.Fatalln(http.ListenAndServe(ip, server))
@@ -29,7 +30,7 @@ func getIpAddress() string {
 			}
 		}
 	}
-	return ip + ":80"
+	return ip
 
 }
 
