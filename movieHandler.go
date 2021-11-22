@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -29,7 +28,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 func GetMovie(w http.ResponseWriter, r *http.Request) {
 	movie := strings.TrimPrefix(r.URL.Path, "/get_movie/")
-	fmt.Println(movie)
+	if movie == "" || movie == "/" {
+		http.Error(w, "send movie name with format", http.StatusNoContent)
+		return
+	}
 	w.Header().Set("content-type", "video/mp4")
 	w.Header().Set("accept-ranges", "bytes")
 	http.ServeFile(w, r, "./movie/"+movie)
