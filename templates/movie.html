@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled Document</title>
+  <link href="css/index.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: rgb(2, 3, 2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <video id="myPlayerID" data-player="default" data-embed="default" data-application-id class="video-js" controls>
+    <source  type="video/mp4" id="source" />
+  </video>
+
+</body>
+<script src="//players.brightcove.net/1752604059001/default_default/index.min.js"></script>
+<script src="js/movie.js"></script>
+<script src="js/index.js"></script>
+
+<script>
+  videojs.getPlayer('myPlayerID').ready(function () {
+    var myPlayer = this;
+    myPlayer.backForwardButtons();
+  });
+</script>
+
+</html>
