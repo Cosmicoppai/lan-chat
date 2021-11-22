@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Untitled Document</title>
-  <link href="css/index.css" rel="stylesheet">
+  <title>映画</title>
+  <link href="static/css/index.css" rel="stylesheet">
   <style>
     body {
       background-color: rgb(2, 3, 2);
@@ -15,13 +15,13 @@
 <body>
 
   <video id="myPlayerID" data-player="default" data-embed="default" data-application-id class="video-js" controls>
-    <source  type="video/mp4" id="source" />
+    <source  type="video/mp4" id="source"  src="/get_movie/jgt.mp4"/>
   </video>
 
 </body>
-<script src="//players.brightcove.net/1752604059001/default_default/index.min.js"></script>
-<script src="js/movie.js"></script>
-<script src="js/index.js"></script>
+<script src="static/js/compressed.js"></script>
+<script src="static/js/movie.js"></script>
+<script src="static/js/index.js"></script>
 
 <script>
   videojs.getPlayer('myPlayerID').ready(function () {
