@@ -10,6 +10,8 @@ func Server(ip string) {
 	ip = ip + ":80"
 	server := http.NewServeMux()
 	server.HandleFunc("/", StaticHandler)
+	server.HandleFunc("/movie_name", currentMovies) // get the json response of current streaming movies
+	server.HandleFunc("/movie/", MovieHandler)
 	// server.HandleFunc("/chat", chatHandler)     // endpoint for chat UI
 	server.HandleFunc("/add-user", userHandler) // endpoint to add user
 	log.Printf("server is listening on %s", ip)
