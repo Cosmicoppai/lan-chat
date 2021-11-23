@@ -17,11 +17,14 @@
 }
 html{
     overflow-x: hidden;
+    overflow-y: hidden;
+
 }
 body {
     background-color: var(--bg-color);
     color: var(--font-color);
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 #navName {
@@ -141,7 +144,7 @@ input:checked+.slider:before {
 .bar {
   position: absolute;
   left: 0;
-  width: 100%;
+  width: 90%;
   padding: 25px 0;
   color: var(--font-color);
   font-size: 18px;
