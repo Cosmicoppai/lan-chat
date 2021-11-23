@@ -16,15 +16,15 @@
     --heading-color: #818cab;
 }
 html{
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-x: revert;
+    overflow-y: revert;
 
 }
 body {
     background-color: var(--bg-color);
     color: var(--font-color);
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-x: revert;
+    overflow-y: revert;
 }
 
 #navName {
@@ -141,33 +141,13 @@ input:checked+.slider:before {
 }
 
 
-.bar {
-  position: absolute;
-  left: 0;
-  width: 90%;
-  padding: 25px 0;
-  color: var(--font-color);
-  font-size: 18px;
-}
-
-.bar_content {
-  display: block;
-  width: 100%;
-  transform: translateX(100%);
-  animation: move 20s linear infinite ;
-}
-
-/* Create the animation */
-@keyframes move {
-  to { transform: translateX(-100%); }
-}
 #fromBtn{
     text-decoration: none;
     color: var(--font-color);
 }
 @media only screen and (max-width: 900px) {
     #myPlayerID{
-        width: 90%;
+        width: 100%;
         height: 50%;
         left: 0;
         right: 0;
