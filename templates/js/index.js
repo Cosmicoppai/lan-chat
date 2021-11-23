@@ -38,11 +38,7 @@ Object.defineProperty(String.prototype, 'capitalize', {
     enumerable: false
 });
 
-let x = localStorage.getItem("movie_name")
-if (x === null) {
-    movieName()
-    x = localStorage.getItem("movie_name")
-}
+let x = getMovieName()
 
 let remove_after = x.indexOf('.');
 let result = x.substring(0, remove_after);

@@ -1,1 +1,1 @@
-# LAN chat room built using Golang
+# LAN Movie & chat room built using Golang
