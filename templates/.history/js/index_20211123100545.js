@@ -46,7 +46,7 @@ fetch('/movie_name')
 return data.json();
 })
 .then(post => {
-    let x = post.movie_name
+    let x = post.movie-name
     let remove_after= x.indexOf('.');
     let result =  x.substring(0, remove_after);
     document.getElementById('movieName').innerHTML += result

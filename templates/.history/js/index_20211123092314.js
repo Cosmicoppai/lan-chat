@@ -46,10 +46,8 @@ fetch('/movie_name')
 return data.json();
 })
 .then(post => {
-    let x = post.movie_name
-    let remove_after= x.indexOf('.');
-    let result =  x.substring(0, remove_after);
-    document.getElementById('movieName').innerHTML += result
-    let movieSrc = document.getElementById('source')
-    movieSrc.setAttribute('src', '/movie/'+ result);
+console.log(post.movie_name);
+document.getElementById('movieName').innerHTML += post.movie_name
+let movieSrc = document.getElementById('source')
+movieSrc.setAttribute('src', '/movie/'+ post.movie_name);
 });
