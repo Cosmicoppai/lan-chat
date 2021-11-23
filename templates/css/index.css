@@ -46,6 +46,9 @@ body {
     margin-bottom: -20px; 
     margin-top: -8px;
 }
+#navbar{
+    color: var(--font-color);
+  }
 .btn{
     background-color: var(--font-color);
     color: var(--bg-color);

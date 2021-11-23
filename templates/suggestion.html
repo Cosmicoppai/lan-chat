@@ -9,47 +9,71 @@
     <link rel="stylesheet" href="static/css/index.css">
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="/" id="navName">
                 <h1 class="display-6">Laxmi Chat/Movie Room</h1>
             </a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
-                <li class="nav-item ">
-                  <a class="nav-link fs-5" aria-current="page" id="contactNameactive" href="/suggestion">Contact</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
+                <li class="nav-item">
+                  <a class="nav-link  fs-5" aria-current="page" id="contactName" href="/suggestion">Suggestion</a>
                 </li>
-              </ul>
-            <form class="d-flex">
-                <div class="theme-switch-wrapper mt-2">
-                    <p class="me-2 mt-2 h6" id="light">Light</p>
-                    <label class="theme-switch" for="checkbox">
-                        <input type="checkbox" id="checkbox" />
-                        <div class="slider round"></div>
-                    </label>
-                    <p class="ms-2 mt-2 me-2 h6" id="dark">Dark</p>
-
-                </div>
-            </form>
+            </ul>
+            <button class="navbar-toggler bi bi-list-ul" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+               <span id="navbar">&#9776;</span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                </ul>
+                <form class="d-flex">
+                    <div class="theme-switch-wrapper mt-2 d-flex">
+                        <p class="me-2 mt-2 h6" id="light">Light</p>
+                        <label class="theme-switch" for="checkbox">
+                            <input type="checkbox" id="checkbox" />
+                            <div class="slider round"></div>
+                        </label>
+                        <p class="ms-2 mt-2 me-2 h6" id="dark">Dark</p>
+                    </div>
+                </form>
+              </div>
         </div>
     </nav>
     <div class="container">
         <div class="mb-3 mt-3">
             <label for="formGroupExampleInput" class="form-label">Movie Suggestion</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter the name of the movie">
-          </div>
-          <div class="mb-3">
+            <input type="text"  class="form-control" id="moviefield"
+                placeholder="Enter the name of the movie">
+        </div>
+        <div class="mb-3">
             <label for="formGroupExampleInput2" class="form-label">Enter Date you wanna see the movie</label>
-            <input id="datefield" class="form-control"  type='date' min='2021-01-01'  ></input>
-          </div>
-          <div class="mb-3">
-            <label for="formGroupExampleInput2" class="form-label">Description</label>
-            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Enter description if you have any ">
-          </div>
-          <div class="container  d-flex align-items-center justify-content-center  px-5 ">
-            <button  type="button" class="btn py-3 px-5">Submit</button>
+            <input id="datefield" class="form-control" type='date' min='2021-01-01'></input>
+        </div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput2" class="form-label">Message</label>
+            <input type="text" class="form-control" id="descriptionfield"
+                placeholder="Enter message if you have any ">
+        </div>
+        <div class="container  d-flex align-items-center justify-content-center  px-5 ">
+            <button type="button" class="btn py-3 px-5" id="button">Submit</button>
         </div>
     </div>
 </body>
+<script type="text/javascript">
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; 
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("datefield").setAttribute("min", today);
+</script>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="static/js/index.js"></script>
+<script src="static/js/suggestions.js"></script>
 </html>
