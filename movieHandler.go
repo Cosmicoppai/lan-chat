@@ -38,6 +38,9 @@ func GetMovie(w http.ResponseWriter, r *http.Request) {
 }
 
 func currentMovies(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		return
+	}
 	textData, _err := ioutil.ReadFile("./movie/schedule.txt") // get movie name from the file
 	if _err != nil {
 		http.Error(w, "some error occured", http.StatusInternalServerError)
@@ -46,7 +49,7 @@ func currentMovies(w http.ResponseWriter, r *http.Request) {
 	}
 	movie := string(textData)
 	resp := make(map[string]string)
-	resp["movie-name"] = movie
+	resp["movie_name"] = movie
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
