@@ -20,10 +20,13 @@ if (currentTheme) {
     if (currentTheme === 'dark') {
         toggleSwitch.checked = true;
         document.getElementById('light').style.opacity = '0.5'
+        document.getElementById('blackButton').style.display='none';
+        document.getElementById('whiteButton').style.display='block';
     }
     else {
         document.getElementById('dark').style.opacity = '0.5'
-
+        document.getElementById('blackButton').style.display='block';
+        document.getElementById('whiteButton').style.display='none';
     }
 }
 
