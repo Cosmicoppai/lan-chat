@@ -46,7 +46,7 @@ func currentMovies(w http.ResponseWriter, r *http.Request) {
 	}
 	movie := string(textData)
 	resp := make(map[string]string)
-	resp["movie-name"] = movie
+	resp["movie_name"] = movie
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
