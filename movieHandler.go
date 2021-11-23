@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -72,4 +73,18 @@ func GetSub(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("content-type", "v")
 	w.Header().Set("accept-ranges", "bytes")
 	http.ServeFile(w, r, "./movie/"+sub)
+}
+
+func GetPoster(w http.ResponseWriter, r *http.Request) {
+	poster := strings.TrimPrefix(r.URL.Path, "/get_poster/")
+	fmt.Println(poster)
+	if poster == "" || poster == "/" {
+		http.Error(w, "poster doesn't exists", http.StatusNoContent)
+		return
+	}
+
+	poster = poster + ".png"
+	fmt.Println(poster)
+	w.Header().Set("content-type", "images/png")
+	http.ServeFile(w, r, "./movie/"+poster)
 }
