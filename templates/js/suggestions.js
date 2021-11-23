@@ -7,7 +7,6 @@ document.getElementById('button').addEventListener('click', () => {
         document.getElementById("descriptionfield").value = "";
         document.getElementById("datefield").value = "";
     }
-    console.log(moviefield, datefield, descriptionfield)
     let formData = new URLSearchParams();
     formData.append('movie_name', moviefield);
     formData.append('date', datefield);

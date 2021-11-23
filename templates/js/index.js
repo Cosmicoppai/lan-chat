@@ -30,13 +30,6 @@ if (currentTheme) {
     }
 }
 
-let x
-if (localStorage.getItem("movie_name")) {
-    x = localStorage.getItem("movie_name")
-}else {
-    movieName()
-    x = localStorage.getItem("movie_name")
-}
 
 Object.defineProperty(String.prototype, 'capitalize', {
     value: function() {
@@ -45,6 +38,11 @@ Object.defineProperty(String.prototype, 'capitalize', {
     enumerable: false
 });
 
+let x = localStorage.getItem("movie_name")
+if (x === null) {
+    movieName()
+    x = localStorage.getItem("movie_name")
+}
 
 let remove_after = x.indexOf('.');
 let result = x.substring(0, remove_after);

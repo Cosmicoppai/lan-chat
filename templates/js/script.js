@@ -1,7 +1,5 @@
-let movie
-if (localStorage.getItem("movie_name")) {
-    movie = localStorage.getItem("movie_name")
-}else {
+let movie = localStorage.getItem("movie_name")
+if (movie == null) {
     movieName()
     movie = localStorage.getItem("movie_name")
 }

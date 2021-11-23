@@ -1,9 +1,9 @@
-let movie
-if (localStorage.getItem("movie_name")) {
-    movie = localStorage.getItem("movie_name")
-}else {
+let moviePoster = localStorage.getItem("movie_name")
+if (moviePoster == null) { // if movie_name doesn't exist in localStorage
     movieName()
-    movie = localStorage.getItem("movie_name")
+    moviePoster = localStorage.getItem("movie_name")
 }
-let imageSrc = document.getElementById('image')
-imageSrc.setAttribute('src', '/get_poster/'+ movie);
+let removeSuffix = moviePoster.indexOf('.');
+let Poster = moviePoster.substring(0, removeSuffix);
+let imageSrc = document.getElementById('poster')
+imageSrc.setAttribute('src', '/get_poster/'+ Poster);
