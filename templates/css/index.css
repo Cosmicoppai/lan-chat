@@ -1,6 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Gelasio&display=swap");
-
-* { 
+* {
     box-sizing: border-box; 
 }
 :root {
@@ -146,7 +144,6 @@ input:checked+.slider:before {
   width: 100%;
   padding: 25px 0;
   color: var(--font-color);
-  font-family: Gelasio;
   font-size: 18px;
 }
 
@@ -154,7 +151,7 @@ input:checked+.slider:before {
   display: block;
   width: 100%;
   transform: translateX(100%);
-  animation: move 15s linear infinite ;
+  animation: move 20s linear infinite ;
 }
 
 /* Create the animation */

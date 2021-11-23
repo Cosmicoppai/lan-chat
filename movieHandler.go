@@ -61,3 +61,15 @@ func currentMovies(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResp)
 	return
 }
+
+func GetSub(w http.ResponseWriter, r *http.Request) {
+	sub := strings.TrimPrefix(r.URL.Path, "/get_sub/")
+	if sub == "" || sub == "/" {
+		http.Error(w, "send movie name with format", http.StatusNoContent)
+		return
+	}
+	sub = sub + ".vtt"
+	// w.Header().Set("content-type", "v")
+	w.Header().Set("accept-ranges", "bytes")
+	http.ServeFile(w, r, "./movie/"+sub)
+}

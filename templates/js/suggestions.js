@@ -2,15 +2,17 @@ document.getElementById('button').addEventListener('click', () => {
     let moviefield = document.getElementById('moviefield').value;
     let datefield = document.getElementById('datefield').value;
     let descriptionfield = document.getElementById('descriptionfield').value;
-    function redirect() {
-        window.location.href = "/";
+    function clear() {
+        document.getElementById("moviefield").value = "";
+        document.getElementById("descriptionfield").value = "";
+        document.getElementById("datefield").value = "";
     }
     console.log(moviefield, datefield, descriptionfield)
-    let formData = new FormData();
+    let formData = new URLSearchParams();
     formData.append('movie_name', moviefield);
     formData.append('date', datefield);
     formData.append('msg', descriptionfield);
-    fetch("/send-suggestions",
+    fetch("/send-suggestion",
     {   
         body: formData,
         method: "post",
@@ -19,7 +21,8 @@ document.getElementById('button').addEventListener('click', () => {
         }
     }).then(response => {
         if (response.ok) { 
-            redirect()
+            alert("Suggestion sent successfully!")
+            clear()
           } else {
             alert("Error!!!!");
           }
