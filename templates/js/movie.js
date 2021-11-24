@@ -18,19 +18,19 @@ videojs.registerPlugin('backForwardButtons', function() {
     newImageFB.setAttribute('src', '//learning-services-media.brightcove.com/doc-assets/player-development/samples/back-forward-buttons/forward-button.png');
     newElementFB.appendChild(newImageFB);
   
-    // +++ Get controlbar and insert elements +++
+    // +++ Get control-bar and insert elements +++
     controlBar = myPlayer.$('.vjs-control-bar');
-    // Get the element to insert buttons in front of in conrolbar
+    // Get the element to insert buttons in front of in control-bar
     insertBeforeNode = myPlayer.$('.vjs-volume-panel');
   
     // Insert the button div in proper location
     controlBar.insertBefore(newElementBB, insertBeforeNode);
     controlBar.insertBefore(newElementFB, insertBeforeNode);
-  
+
     // +++ Add event handlers to jump back or forward +++
     // Back button logic, don't jump to negative times
     newElementBB.addEventListener('click', function () {
-      var newTime,
+      let newTime,
           rewindAmt = jumpAmount,
           videoTime = myPlayer.currentTime();
       if (videoTime >= rewindAmt) {
@@ -40,10 +40,10 @@ videojs.registerPlugin('backForwardButtons', function() {
       }
       myPlayer.currentTime(newTime);
     });
-  
+
     // Forward button logic, don't jump past the duration
     newElementFB.addEventListener('click', function () {
-      var newTime,
+      let newTime,
           forwardAmt = jumpAmount,
           videoTime = myPlayer.currentTime(),
           videoDuration = myPlayer.duration();
@@ -56,7 +56,17 @@ videojs.registerPlugin('backForwardButtons', function() {
     });
   });
 
-  var video = document.getElementById('myPlayerID');
-var source = document.getElementById('source');
+let video = document.getElementById("myPlayerID");
+window.addEventListener('keypress', function (evt) {
+        evt=evt||window.evt;
+        if (evt.keyCode === 37) {
+            video.currentTime = Math.max(0, video.currentTime - 5);
+        } else if (evt.keyCode === 39) {
+            video.currentTime = Math.min(video.duration, video.currentTime + 5);
+        }
+});
 
-// source.setAttribute('src', 'http://www.tools4movies.com/trailers/1012/Kill%20Bill%20Vol.3.mp4');
+videojs.getPlayer('myPlayerID').ready(function () {
+    let myPlayer = this;
+    myPlayer.backForwardButtons();
+});
