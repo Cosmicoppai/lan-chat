@@ -56,16 +56,6 @@ videojs.registerPlugin('backForwardButtons', function() {
     });
   });
 
-let video = document.getElementById("myPlayerID");
-window.addEventListener('keypress', function (evt) {
-        evt=evt||window.evt;
-        if (evt.keyCode === 37) {
-            video.currentTime = Math.max(0, video.currentTime - 5);
-        } else if (evt.keyCode === 39) {
-            video.currentTime = Math.min(video.duration, video.currentTime + 5);
-        }
-});
-
 videojs.getPlayer('myPlayerID').ready(function () {
     let myPlayer = this;
     myPlayer.backForwardButtons();
