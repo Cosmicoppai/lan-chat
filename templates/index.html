@@ -75,5 +75,21 @@
 <script src="static/js/poster.js"></script>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="static/js/index.js"></script>
+<script type="text/javascript">
+const cTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+if (cTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+
+    if (cTheme === 'dark') {
+        toggleSwitch.checked = true;
+        document.getElementById('blackButton').style.display='none';
+        document.getElementById('whiteButton').style.display='block';
+    }
+    else {
+        document.getElementById('blackButton').style.display='block';
+        document.getElementById('whiteButton').style.display='none';
+    }
+}
+</script>
 
 </html>
