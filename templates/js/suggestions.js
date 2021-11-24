@@ -1,4 +1,5 @@
 document.getElementById('button').addEventListener('click', () => {
+    document.getElementById('button').disabled = true;
     let moviefield = document.getElementById('moviefield').value;
     let datefield = document.getElementById('datefield').value;
     let descriptionfield = document.getElementById('descriptionfield').value;
@@ -6,6 +7,7 @@ document.getElementById('button').addEventListener('click', () => {
         document.getElementById("moviefield").value = "";
         document.getElementById("descriptionfield").value = "";
         document.getElementById("datefield").value = "";
+        document.getElementById('button').disabled = false;
     }
     let formData = new URLSearchParams();
     formData.append('movie_name', moviefield);

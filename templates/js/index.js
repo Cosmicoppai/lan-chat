@@ -34,8 +34,9 @@ Object.defineProperty(String.prototype, 'capitalize', {
     enumerable: false
 });
 
-let x = getMovieName()
 
-let remove_after = x.indexOf('.');
-let result = x.substring(0, remove_after);
-document.getElementById('movieName').innerHTML += result.capitalize()
+getMovieName().then(x => {
+    let remove_after = x.indexOf('.');
+    let result = x.substring(0, remove_after);
+    document.getElementById('movieName').innerHTML += result.capitalize()
+})

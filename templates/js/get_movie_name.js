@@ -1,23 +1,11 @@
-let movieName = () => {
-    let x
-    fetch('/movie_name')
-        .then(data => {
-            return data.json();
-        })
-        .then(post => {
-            x = post.movie_name
-            localStorage.setItem("movie_name", x)
-        });
-
+let fetchMovieName = async () => {
+    const response = await fetch("/movie_name")
+    const data = await response.json()
+    return data.movie_name
 }
 
 
-function getMovieName() {
-    let movie = localStorage.getItem("movie_name")
-    if (movie === null) {
-        movieName()
-        movie = localStorage.getItem("movie_name")
+async function getMovieName() {
+    return await fetchMovieName()
 
-    }
-    return movie
 }
