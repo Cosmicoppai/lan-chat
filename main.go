@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os/exec"
 )
 
 func Server(ip string) {
@@ -41,6 +42,13 @@ func getIpAddress() string {
 }
 
 func main() {
+	cmd := exec.Command("cmd", "/c", `netsh wlan connect name="Laxmi 4"`)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+	log.Print(string(output))
 
 	_ipAddress := getIpAddress()
 	if _ipAddress != "" {
