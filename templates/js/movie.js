@@ -60,3 +60,11 @@ videojs.getPlayer('myPlayerID').ready(function () {
     let myPlayer = this;
     myPlayer.backForwardButtons();
 });
+
+let vid1 = videojs('myPlayerID');
+vid1.on('dblclick', function () {
+  vid1.currentTime() + 5;
+});
+vid1.on('dblclick', function () {
+  vid1.currentTime() - 5;
+});
