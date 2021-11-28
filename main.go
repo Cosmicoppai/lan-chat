@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/cosmicoppai/lan-chat/chat"
 	"log"
 	"net"
 	"net/http"
+	"os/exec"
 )
 
 func Server(ip string) {
@@ -42,6 +42,13 @@ func getIpAddress() string {
 }
 
 func main() {
+	cmd := exec.Command("cmd", "/c", `netsh wlan connect name="Laxmi 4 (1)"`)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+	log.Print(string(output))
 
 	_ipAddress := getIpAddress()
 	if _ipAddress != "" {
@@ -50,6 +57,6 @@ func main() {
 		log.Fatalln("Pass a Valid IP Address")
 	}
 
-	chat.CreateSock(_ipAddress)
+	//chat.CreateSock(_ipAddress)
 
 }
