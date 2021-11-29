@@ -123,7 +123,12 @@ body {
     overflow-y: auto;
 }
 
-.reciever {
+
+#sender{
+    max-width: 700px;
+    border-radius: 30px;
+}
+#reciever{
     max-width: 700px;
     border-radius: 30px;
 }
@@ -148,7 +153,11 @@ textarea {
 
     }
 
-    .reciever {
+    
+    #sender{
+        max-width: 600px;
+    }
+    #reciever{
         max-width: 600px;
     }
 }
@@ -167,7 +176,10 @@ textarea {
         margin-top: -500px;
     }
 
-    .reciever {
+    #sender{
+        max-width: 500px;
+    }
+    #reciever{
         max-width: 500px;
     }
 }
@@ -186,7 +198,10 @@ textarea {
         max-width: 150px;
     }
 
-    .reciever {
+    #sender{
+        max-width: 380px;
+    }
+    #reciever{
         max-width: 380px;
     }
 
@@ -202,9 +217,11 @@ textarea {
         max-width: 100px;
     }
 
-    .reciever {
+    #sender{
         max-width: 260px;
     }
-
+    #reciever{
+        max-width: 260px;
+    }
 
 }

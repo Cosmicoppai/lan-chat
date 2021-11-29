@@ -23,28 +23,42 @@
             </div>
         </nav>
         <div class="messages" id="messages">
-            <div class="container reciever mt-2 mb-2 border border-light bg-gradient  float-start  ms-2">
+
+            <div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender">
                 <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
-                <p class=" ms-1 "  style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, labore alias numquam,
+                <p class=" ms-1 " style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet
+                    consectetur adipisicing elit. Harum, labore alias numquam,
                     impedit amet laborum minus molestiae quod natus fugiat reiciendis expedita sed quisquam asperiores
                     ipsa. Neque perferendis facere nulla ratione. Commodi omnis totam inventore eius exercitationem!
                     Pariatur eaque temporibus repellendus quidem totam aliquam molestiae tempore, nobis harum iure
                     dolores!</p>
             </div>
-            <div class="container reciever mt-2 mb-2 border border-light bg-gradient  float-end  me-2">
-                <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
-                <p class=" ms-1 "  style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, labore alias numquam,
-                    impedit amet laborum minus molestiae quod natus fugiat reiciendis expedita sed quisquam asperiores
-                    ipsa. Neque perferendis facere nulla ratione. Commodi omnis totam inventore eius exercitationem!
-                    Pariatur eaque temporibus repellendus quidem totam aliquam molestiae tempore, nobis harum iure
-                    dolores!</p>
-            </div>
-            
+                <div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;" >
+                    <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill" style="font-family: sans-serif; font-size: 15px;"><span style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">Sushant</span> has left the chat</span>
+                    </span>
+                </div>
+                
+                <div class="container reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
+                    id="reciever">
+                    <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                    <p class=" ms-1 " style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet
+                        consectetur adipisicing elit. Harum, labore alias numquam,
+                        impedit amet laborum minus molestiae quod natus fugiat reiciendis expedita sed quisquam
+                        asperiores
+                        ipsa. Neque perferendis facere nulla ratione. Commodi omnis totam inventore eius exercitationem!
+                        Pariatur eaque temporibus repellendus quidem totam aliquam molestiae tempore, nobis harum iure
+                        dolores!</p>
+                </div>
+                <div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;" >
+                    <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill" style="font-family: sans-serif; font-size: 15px;"><span style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">Sushant</span> has joined the chat</span>
+                    </span>
+                </div>
+
         </div>
         <div class="input-group mb-1 border-top " id="messageSender">
             <select id="inputState" class="form-select bg-transparent text-light border-0 border-end">
                 <option selected value="text">Plain Text</option>
-                <option  value="markdown">Markdown</option>
+                <option value="markdown">Markdown</option>
             </select>
             <textarea type="text" id="sendMessage" class="form-control bg-gradient text-light border-0 border-end py-3"
                 placeholder="Type your message..."></textarea>
@@ -65,10 +79,10 @@
         setTimeout(function () {
             el.style.cssText = 'height:auto; padding:0';
             el.style.cssText = 'height:' + el.scrollHeight + 'px';
-            if(window.innerWidth <= '500'){
-            document.getElementById('messages').style.maxHeight = '300px'
+            if (window.innerWidth <= '500') {
+                document.getElementById('messages').style.maxHeight = '300px'
             }
-            else{
+            else {
                 document.getElementById('messages').style.maxHeight = '370px'
             }
         }, 0);

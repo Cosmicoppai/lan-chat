@@ -8,7 +8,7 @@ document.getElementById('sendButton').addEventListener('click', () => {
     else{
         result = textarea
     }
-    // console.log(select)
+    console.log(result)
     function clear() {
         document.getElementById("sendMessage").value = "";
         document.querySelector('textarea').style.cssText ='height:65px'
