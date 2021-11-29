@@ -7,13 +7,16 @@
     --font-color: #171717;
     --bg-color: #EDEDED;
     --heading-color: #292922;
+    --foreground-color: white;
 }
+
 [data-theme="dark"] {
     --primary-color: #9A97F3;
     --secondary-color: #818cab;
     --font-color: #EDEDED;
     --bg-color: #171717;
     --heading-color: #818cab;
+    --foreground-color: white;
 }
 html{
     overflow-x: revert;
@@ -26,7 +29,9 @@ body {
     overflow-x: revert;
     overflow-y: revert;
 }
-
+#namefield{
+    border-color:  var(--font-color);
+}
 #navName {
     color: var(--font-color);
     margin-bottom: -20px; 
@@ -50,6 +55,11 @@ body {
 #navbar{
     color: var(--font-color);
   }
+
+hr{
+    color: var(--font-color);
+    background-color: var(--font-color);
+}
 .btn{
     background-color: var(--font-color);
     color: var(--bg-color);
@@ -140,11 +150,22 @@ input:checked+.slider:before {
     border-radius: 50%;
 }
 
-
 #fromBtn{
     text-decoration: none;
     color: var(--font-color);
 }
+
+
+  
+
+
+
+
+
+
+
+
+
 @media only screen and (max-width: 900px) {
     #myPlayerID{
         width: 100%;

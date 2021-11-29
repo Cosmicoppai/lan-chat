@@ -1,0 +1,227 @@
+body {
+    background-image: url('../images/chatBg.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    color: white;
+    height: 100vh;
+    width: 100vw;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+@font-face {
+    font-family: 'Dancing Script';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Dancing Script'), local('DancingScript'), url('../font/Potra.ttf') format('truetype');
+}
+
+.logo b {
+    margin-top: 20px;
+    font-size: 3rem;
+    line-height: 80%;
+    transform: rotateX(0) rotateY(-25deg);
+    text-transform: uppercase;
+    width: 100px;
+    text-align: center;
+    color: #b9dfff;
+    color: #fff;
+    font-family: "Zefani";
+    font-family: 'Dancing Script';
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #f80606, 0 0 35px #f80606, 0 0 40px #f80606;
+}
+
+.logo b.active span {
+    animation: blink linear infinite 1s;
+
+}
+
+.logo b.active span:nth-of-type(2) {
+    animation: blink linear infinite 2s;
+}
+
+@keyframes blink {
+    78% {
+        color: inherit;
+        text-shadow: inherit;
+    }
+
+    79% {
+        color: #333;
+    }
+
+    80% {
+
+        text-shadow: none;
+    }
+
+    81% {
+        color: inherit;
+        text-shadow: inherit;
+    }
+
+    82% {
+        color: #333;
+        text-shadow: none;
+    }
+
+    83% {
+        color: inherit;
+        text-shadow: inherit;
+    }
+
+    92% {
+        color: #333;
+        text-shadow: none;
+    }
+
+    92.5% {
+        color: inherit;
+        text-shadow: inherit;
+    }
+}
+
+
+
+.cont {
+    width: 80%;
+    height: 85%;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .15);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    backdrop-filter: blur(5px);
+    margin-top: 6%;
+}
+#sendMessage{
+    max-height: 180px;
+    color: #FFF;
+    background: transparent;
+}
+#messageSender {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+#inputState {
+    max-width: 200px;
+}
+
+.messages {
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+
+#sender{
+    max-width: 700px;
+    border-radius: 30px;
+}
+#reciever{
+    max-width: 700px;
+    border-radius: 30px;
+}
+
+select option {
+    background: rgba(0, 0, 0, 0.801);
+}
+
+.form-control::-webkit-input-placeholder {
+    color: rgb(255, 255, 255);
+}
+
+textarea {
+    font-size: 14px;
+    height: 4em;
+}
+
+@media screen and (max-width: 1500px) {
+    .messages {
+        max-height: 420px;
+        overflow-y: auto;
+
+    }
+
+    
+    #sender{
+        max-width: 600px;
+    }
+    #reciever{
+        max-width: 600px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .cont {
+        width: 100%;
+
+    }
+
+    .logo b {
+        font-size: 1.5rem;
+    }
+
+    #message {
+        margin-top: -500px;
+    }
+
+    #sender{
+        max-width: 500px;
+    }
+    #reciever{
+        max-width: 500px;
+    }
+}
+
+@media screen and (max-width: 610px) {
+    .cont {
+        width: 100%;
+        margin-top: 10%;
+    }
+
+    .logo b {
+        font-size: 1.5rem;
+    }
+
+    #inputState {
+        max-width: 150px;
+    }
+
+    #sender{
+        max-width: 380px;
+    }
+    #reciever{
+        max-width: 380px;
+    }
+
+}
+
+@media screen and (max-width: 450px) {
+    .cont {
+        width: 100%;
+        margin-top: 15%;
+    }
+
+    #inputState {
+        max-width: 100px;
+    }
+
+    #sender{
+        max-width: 260px;
+    }
+    #reciever{
+        max-width: 260px;
+    }
+
+}
