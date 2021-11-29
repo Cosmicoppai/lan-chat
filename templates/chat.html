@@ -22,30 +22,31 @@
                 <span class="navbar-brand mb-0 h1 mx-auto">Online:</span>
             </div>
         </nav>
-        <div class="messages">
+        <div class="messages" id="messages">
             <div class="container reciever mt-2 mb-2 border border-light bg-gradient  float-start  ms-2">
-                <h5 class="mt-2 ms-1">Sushant</h5>
-                <p class=" ms-1">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, labore alias numquam,
+                <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                <p class=" ms-1 "  style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, labore alias numquam,
                     impedit amet laborum minus molestiae quod natus fugiat reiciendis expedita sed quisquam asperiores
                     ipsa. Neque perferendis facere nulla ratione. Commodi omnis totam inventore eius exercitationem!
                     Pariatur eaque temporibus repellendus quidem totam aliquam molestiae tempore, nobis harum iure
                     dolores!</p>
             </div>
             <div class="container reciever mt-2 mb-2 border border-light bg-gradient  float-end  me-2">
-                <h5 class="mt-2 ms-1">Sushant</h5>
-                <p class=" ms-1">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, labore alias numquam,
+                <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                <p class=" ms-1 "  style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, labore alias numquam,
                     impedit amet laborum minus molestiae quod natus fugiat reiciendis expedita sed quisquam asperiores
                     ipsa. Neque perferendis facere nulla ratione. Commodi omnis totam inventore eius exercitationem!
                     Pariatur eaque temporibus repellendus quidem totam aliquam molestiae tempore, nobis harum iure
                     dolores!</p>
             </div>
+            
         </div>
         <div class="input-group mb-1 border-top " id="messageSender">
             <select id="inputState" class="form-select bg-transparent text-light border-0 border-end">
                 <option selected value="text">Plain Text</option>
                 <option  value="markdown">Markdown</option>
             </select>
-            <textarea type="text" id="sendMessage" class="form-control bg-transparent text-light border-0 border-end py-3"
+            <textarea type="text" id="sendMessage" class="form-control bg-gradient text-light border-0 border-end py-3"
                 placeholder="Type your message..."></textarea>
             <button type="button" class="bg-transparent mx-2 border-0" id="sendButton"><img width="30" height="25"
                     src="static/images/send.png" alt="My Happy SVG" /></button>
@@ -64,6 +65,12 @@
         setTimeout(function () {
             el.style.cssText = 'height:auto; padding:0';
             el.style.cssText = 'height:' + el.scrollHeight + 'px';
+            if(window.innerWidth <= '500'){
+            document.getElementById('messages').style.maxHeight = '300px'
+            }
+            else{
+                document.getElementById('messages').style.maxHeight = '370px'
+            }
         }, 0);
     }
     window.onload = () => {

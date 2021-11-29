@@ -11,6 +11,7 @@ document.getElementById('sendButton').addEventListener('click', () => {
     // console.log(select)
     function clear() {
         document.getElementById("sendMessage").value = "";
+        document.querySelector('textarea').style.cssText ='height:65px'
     }
     fetch("/",
         {
@@ -26,6 +27,7 @@ document.getElementById('sendButton').addEventListener('click', () => {
                 clear()
             } else {
                 alert("Couldn't send your message!");
+                clear()
             }
         })
 

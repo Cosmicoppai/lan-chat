@@ -17,7 +17,7 @@ body {
     font-family: 'Dancing Script';
     font-style: normal;
     font-weight: normal;
-    src: local('Dancing Script'), local('DancingScript'), url('../Potra.ttf') format('truetype');
+    src: local('Dancing Script'), local('DancingScript'), url('../font/Potra.ttf') format('truetype');
 }
 
 .logo b {
@@ -102,7 +102,11 @@ body {
     backdrop-filter: blur(5px);
     margin-top: 6%;
 }
-
+#sendMessage{
+    max-height: 180px;
+    color: #FFF;
+    background: transparent;
+}
 #messageSender {
     position: fixed;
     left: 0;
