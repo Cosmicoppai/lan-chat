@@ -87,6 +87,28 @@ body {
 
 
 
+.chatRoom {
+    width: 40%;
+    height: 50%;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .15);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 15%;
+    bottom: 0;
+    margin: auto;
+    backdrop-filter: blur(5px);
+    margin-top: 6%;
+}
+
+.inputName {
+    position: absolute;
+    top: 15%;
+    left: 25%;
+}
+
 .cont {
     width: 80%;
     height: 85%;
@@ -102,11 +124,13 @@ body {
     backdrop-filter: blur(5px);
     margin-top: 6%;
 }
-#sendMessage{
+
+#sendMessage {
     max-height: 180px;
     color: #FFF;
     background: transparent;
 }
+
 #messageSender {
     position: fixed;
     left: 0;
@@ -124,11 +148,12 @@ body {
 }
 
 
-#sender{
+#sender {
     max-width: 700px;
     border-radius: 30px;
 }
-#reciever{
+
+#reciever {
     max-width: 700px;
     border-radius: 30px;
 }
@@ -153,19 +178,25 @@ textarea {
 
     }
 
-    
-    #sender{
+
+    #sender {
         max-width: 600px;
     }
-    #reciever{
+
+    #reciever {
         max-width: 600px;
     }
 }
 
 @media screen and (max-width: 900px) {
+    .chatRoom {
+        width: 60%;
+        height: 40%;
+
+    }
+
     .cont {
         width: 100%;
-
     }
 
     .logo b {
@@ -176,15 +207,21 @@ textarea {
         margin-top: -500px;
     }
 
-    #sender{
+    #sender {
         max-width: 500px;
     }
-    #reciever{
+
+    #reciever {
         max-width: 500px;
     }
 }
 
 @media screen and (max-width: 610px) {
+    .chatRoom {
+        width: 80%;
+        height: 40%;
+    }
+
     .cont {
         width: 100%;
         margin-top: 10%;
@@ -198,16 +235,23 @@ textarea {
         max-width: 150px;
     }
 
-    #sender{
+    #sender {
         max-width: 380px;
     }
-    #reciever{
+
+    #reciever {
         max-width: 380px;
     }
 
 }
 
 @media screen and (max-width: 450px) {
+    .chatRoom {
+        width: 100%;
+        height: 50%;
+        top: 20%;
+    }
+
     .cont {
         width: 100%;
         margin-top: 15%;
@@ -217,10 +261,11 @@ textarea {
         max-width: 100px;
     }
 
-    #sender{
+    #sender {
         max-width: 260px;
     }
-    #reciever{
+
+    #reciever {
         max-width: 260px;
     }
 
