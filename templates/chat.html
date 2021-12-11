@@ -16,7 +16,14 @@
             <span class="logo navbar-brand"><b id="flicker"> <span>Laxmi </span>Chat<span>Room</span> </b></span>
         </div>
     </nav>
-    <div class="cont ">
+    <div class="chatRoom  text-center" id="name">
+        <div class="mb-3 mt-3 w-50 h-100 inputName text-center">
+            <label for="formGroupExampleInput" class="form-label h3">Enter the Name for your Chatroom</label>
+            <input type="text"  class="form-control " id="namefield">
+            <a  type="button" class="btn btn-outline-light bg-gradient btn-lg mt-2 py-2 px-4" id="chatButton">Start Chat</a>
+        </div>
+    </div>
+    <div class="cont " id="chat" style="display: none;">
         <nav class="navbar border-bottom">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1 mx-auto">Online:</span>
@@ -102,5 +109,5 @@
         }, 5000);
     }, 1800000);
 </script>
-
+<script src="static/js/chat.js"></script>
 </html>
