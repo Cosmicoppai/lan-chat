@@ -131,6 +131,7 @@ body {
     background: transparent;
 }
 
+
 #messageSender {
     position: fixed;
     left: 0;
@@ -147,6 +148,14 @@ body {
     overflow-y: auto;
 }
 
+#imgSender {
+    max-width: 100%;
+    max-height: 90%;
+}
+#imgSender2 {
+    max-width: 100%;
+    max-height: 90%;
+}
 
 #sender {
     max-width: 700px;
@@ -166,9 +175,125 @@ select option {
     color: rgb(255, 255, 255);
 }
 
+#fileAsk {
+    margin-top: -60px;
+    display: none;
+}
+
 textarea {
     font-size: 14px;
     height: 4em;
+}
+
+.fileUpload input[type=file] {
+    display: none;
+
+}
+
+#imgTextarea {
+    width: 30px;
+    height: 50px;
+}
+
+#imgSender {
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+#imgSender2 {
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#imgSender:hover {
+    opacity: 0.7;
+}
+#imgSender2 {
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#imgSender2:hover {
+    opacity: 0.7;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 100%;
+    height: 80%;
+    max-width: 700px;
+}
+
+
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+}
+
+
+.modal-content, #caption {
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0)
+    }
+
+    to {
+        transform: scale(1)
+    }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px) {
+    .modal-content {
+        width: 100%;
+        
+    }
 }
 
 @media screen and (max-width: 1500px) {
@@ -203,6 +328,10 @@ textarea {
         font-size: 1.5rem;
     }
 
+    #inputState {
+        max-width: 120px;
+    }
+
     #message {
         margin-top: -500px;
     }
@@ -222,6 +351,15 @@ textarea {
         height: 40%;
     }
 
+    #fileAsk {
+        margin-top: -75px;
+    }
+
+    #imgTextarea {
+        width: 25px;
+        height: 50px;
+    }
+
     .cont {
         width: 100%;
         margin-top: 10%;
@@ -232,7 +370,7 @@ textarea {
     }
 
     #inputState {
-        max-width: 150px;
+        max-width: 120px;
     }
 
     #sender {
@@ -246,9 +384,14 @@ textarea {
 }
 
 @media screen and (max-width: 450px) {
+    #imgTextarea {
+        width: 23px;
+        height: 50px;
+    }
+
     .chatRoom {
         width: 100%;
-        height: 50%;
+        height: 70%;
         top: 20%;
     }
 
@@ -258,7 +401,7 @@ textarea {
     }
 
     #inputState {
-        max-width: 100px;
+        max-width: 20px;
     }
 
     #sender {
