@@ -90,7 +90,7 @@
                 <option selected value="text">Plain Text</option>
                 <option value="markdown">Markdown</option>
             </select>
-            <textarea type="text" id="sendMessage" class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
+            <textarea maxlength="2048" type="text"  id="sendMessage" class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
                 placeholder="Type your message..."></textarea>
             <label class=" fileUpload px-2 btn-default bg-dark border-0 border-end ">
                 <img class="mt-2"
@@ -114,7 +114,7 @@
         setTimeout(function () {
             el.style.cssText = 'height:auto; padding:0';
             el.style.cssText = 'height:' + el.scrollHeight + 'px';
-            let a = el.scrollHeight - 10
+            let a = 480
             document.getElementById('fileAsk').style.marginTop = '-'+a+'px'
         }, 0);
     }
