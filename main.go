@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cosmicoppai/lan-chat/chat"
 	"log"
 	"net"
 	"net/http"
@@ -17,8 +18,6 @@ func Server(ip string) {
 	server.HandleFunc("/get_movie/", GetMovie)         // endpoint to get movie
 	server.HandleFunc("/get_sub/", GetSub)             // endpoint to get sub
 	server.HandleFunc("/get_poster/", GetPoster)       //endpoint to  get current premiering movie poster
-	//server.HandleFunc("/chat", chat.chatHandler)       // endpoint for chat UI
-	// server.HandleFunc("/add-user", chat.userHandler)   // endpoint to add user
 	log.Printf("server is listening on %s", ip)
 	log.Fatalln(http.ListenAndServe(ip, server))
 }
@@ -42,7 +41,7 @@ func getIpAddress() string {
 }
 
 func main() {
-	cmd := exec.Command("cmd", "/c", `netsh wlan connect name="Laxmi 4 (1)"`)
+	cmd := exec.Command("cmd", "/c", `netsh wlan connect name="Laxmi 4"`)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -57,6 +56,13 @@ func main() {
 		log.Fatalln("Pass a Valid IP Address")
 	}
 
-	//chat.CreateSock(_ipAddress)
+	conn, err_ := net.Listen("tcp", _ipAddress+":9000")
+	if err_ != nil {
+		log.Fatalln(err_)
+	}
+	e := chat.Serve(conn)
+	if e != nil {
+		return
+	}
 
 }
