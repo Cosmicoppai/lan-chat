@@ -46,13 +46,17 @@ func startChat(conn net.Conn) {
 			byte2, _ := read.ReadByte()        // Read the next byte
 			isMaskBitSet := byte2&maskBit != 0 // check if first bit of 2nd byte is set or not
 
+			if !isMaskBitSet {
+				conn.Close()
+			}
+
 			var payloadLen int
 			var nbs []byte // series of bytes to store if payLoadLen > 125
 			if int(byte2&0x7f) <= 125 {
 				payloadLen = int(byte2 & 0x7f)
 			} else if byte2&0x7f == 126 { // Read the next 16 bits
-				nb1, _ := read.ReadByte()
-				nb2, _ := read.ReadByte()
+				nb1, _ := read.ReadByte() // Read 3rd byte
+				nb2, _ := read.ReadByte() // Read 4th byte
 				nbs = append(nbs, []byte{nb1, nb2}...)
 				payloadLen = int(binary.BigEndian.Uint16(nbs))
 			} else {
