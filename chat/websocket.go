@@ -1,36 +1,54 @@
 package chat
 
 import (
+	"bufio"
+	"net"
 	"net/http"
 	"strings"
 )
 
-func ConnectionUpgrade(w http.ResponseWriter, r *http.Request) {
+const (
+	finalBit = 1 << 7 // 10000000  set the first bit
+	rsv1Bit  = 1 << 6
+	rsv2Bit  = 1 << 5
+	rsv3Bit  = 1 << 4
 
-	if strings.ToLower(r.Header.Get("Connection")) == "upgrade" &&
+	maskBit            = 1 << 7 // 10000000
+	maxFrameHeaderSize = 2 + 8 + 4
+
+	continuationFrame = 0
+	noFrame           = -1
+)
+
+const (
+	TextMessage   = 1
+	BinaryMessage = 2
+	CloseMessage  = 8
+	PingMessage   = 9
+	PongMessage   = 10
+)
+
+func connectionUpgrade(conn net.Conn) (success bool) {
+
+	c := bufio.NewReader(conn)
+	r, _ := http.ReadRequest(c)     // to read header
+	responseHeader := http.Header{} // initialize the response header
+	rh := http.Response{}           // to write response
+	if strings.ToLower(r.Header.Get("Connection")) == "upgrade" && r.Header.Get("Sec-WebSocket-Key") != "" &&
 		strings.ToLower(r.Header.Get("Upgrade")) == "websocket" && r.Method == "GET" {
 
-		webSockKey := r.Header.Get("Sec-WebSocket-Key")
-		if webSockKey != "" {
-			w.WriteHeader(http.StatusSwitchingProtocols)
-			w.Header().Set("Upgrade", "websocket")
-			w.Header().Set("Connection", "Upgrade")
-			w.Header().Set("Sec-WebSocket-Version", "13")
-
-			// The Sec-WebSocket-Accept header is important in that the server must derive it from the sec-WebSocket-Key
-			// that the client sent to it
-
-			secAcceptKey := computeAcceptKey(webSockKey) // compute the sec-WebSocket-Accept Key
-			w.Header().Set("Sec-WebSocket-Accept", secAcceptKey)
-			w.Header().Set("Sec-WebSocket-Origin", "http://192.168.1.106/")
-			w.Header().Set("Sec-Websocket-Location", "ws://192.168.1.106/start-chat")
-			// w.Write([]byte("Ok"))
-
-		} else {
-			w.WriteHeader(http.StatusBadRequest)
-		}
+		key := r.Header.Get("Sec-WebSocket-Key")
+		key = computeAcceptKey(key)
+		responseHeader["Sec-WebSocket-Accept"] = []string{key}
+		responseHeader["Upgrade"] = []string{"websocket"}
+		responseHeader["Connection"] = []string{"Upgrade"}
+		rh.StatusCode = http.StatusSwitchingProtocols
+		rh.Header = responseHeader // Append the Header
+		_ = rh.Write(conn)         // write the response
+		return true
 	} else {
-		w.WriteHeader(http.StatusBadRequest) // if upgrade is not requested
+		_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
+		return false
 	}
 
 }
