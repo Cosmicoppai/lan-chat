@@ -23,20 +23,13 @@ func Server(ip string) {
 }
 
 func getIpAddress() string {
-	var ip string
-	_addr, _err := net.InterfaceAddrs()
-	if _err != nil {
-		log.Println(_err)
-		return ""
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Panic(err)
 	}
-	for _, a := range _addr {
-		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				ip = ipnet.IP.String()
-			}
-		}
-	}
-	return ip
+
+	defer conn.Close()
+	return conn.LocalAddr().(*net.UDPAddr).IP.To4().String()
 
 }
 

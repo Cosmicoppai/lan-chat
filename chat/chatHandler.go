@@ -68,7 +68,6 @@ func startChat(conn net.Conn) {
 			}
 
 			if isMaskBitSet && (opCode == TextMessage) && isFinalBit != 0 {
-				const maskKeyLen int = 4 // length of maskKeyLen
 				remBytes, _ := read.Peek(maskKeyLen + payloadLen)
 				maskKey := remBytes[:maskKeyLen]
 				encodedPayLoad := remBytes[4:]
