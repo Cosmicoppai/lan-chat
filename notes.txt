@@ -1,0 +1,33 @@
+// connection upgrade
+// connection open
+// connection close
+// security
+// ping pong
+// handling of other than text data
+
+
+websocket begins with a Http GET Request from client to server, called the 'handshake'. This request carries with
+it a Connection: upgrade, and Upgrade: websocket header to tell the server that it wants to begin a WebSocket connection,
+and a Sec-WebSocket-Version header that indicates the kind of response it wants.
+
+The request header also include a Sec-WebSocket-Key field. With this, the server creates a Sec-WebSocket-Accept header that
+forms part of its response.
+
+
+
+// Client HandShake Request
+
+GET /chat HTTP/1.1
+Host: example.com:8000
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Version: 13
+
+
+server:- types :- add, remove, message, image
+client:- types :- alert, message
+
+{type:'add', username:'cosmicoppai'}  -> {'type':'alert', 'msg':'cosmicoppai has joined the chat', 'token':'random-value'}
+{type:'remove', 'username':'cosmicoppai', 'token':'random-value'} -> {'type': 'alert', 'msg':'cosmicoppai has left the chat'}
+{'type':'message', 'msg':'yo'} -> {'type':'message', 'msg':'yo', username:'cosmicoppai'}

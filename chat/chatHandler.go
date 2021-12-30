@@ -9,11 +9,6 @@ import (
 	"net/http"
 )
 
-type Message struct {
-	typ string
-	msg string
-}
-
 func Serve(conn net.Listener) error {
 	for {
 		req, e := conn.Accept()
@@ -77,23 +72,9 @@ func startChat(conn net.Conn) {
 					decodedPayload[i] = encodedPayLoad[i] ^ maskKey[i%maskKeyLen]
 
 				}
+				handleChat(conn, decodedPayload, byte2, nbs, isFinalBit, opCode, payloadLen)
+
 				_, _ = read.Discard(read.Buffered()) // Reset the buffer
-
-				var payloadLenBytes []byte
-				if payloadLen == int(byte2&0x7f) {
-					payloadLenBytes = []byte{byte(payloadLen)}
-				} else {
-					payloadLenBytes = []byte{byte2 & 0x7f}
-					payloadLenBytes = append(payloadLenBytes, nbs...)
-				}
-
-				msg := []byte{isFinalBit | opCode}         // add the first byte consist of isFinalBit + OpCode
-				finMsg := append(msg, payloadLenBytes...)  // add the bytes consist of payloadLen
-				finMsg = append(finMsg, decodedPayload...) // add the message
-				_, err = conn.Write(finMsg)
-				if err != nil {
-					fmt.Println(err)
-				}
 
 			} else {
 				_, _ = read.Discard(read.Buffered())
