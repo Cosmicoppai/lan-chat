@@ -25,9 +25,9 @@ Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
 Sec-WebSocket-Version: 13
 
 
-server:- types :- add, remove, message, image
-client:- types :- alert, message
+server:- types :- add, remove, msg, img
+client:- types :- alert, msg
 
-{type:'add', username:'cosmicoppai'}  -> {'type':'alert', 'msg':'cosmicoppai has joined the chat', 'token':'random-value'}
-{type:'remove', 'username':'cosmicoppai', 'token':'random-value'} -> {'type': 'alert', 'msg':'cosmicoppai has left the chat'}
-{'type':'message', 'msg':'yo'} -> {'type':'message', 'msg':'yo', username:'cosmicoppai'}
+{"typ":"add", "userName":"cosmicoppai"}  -> {'typ':'alert', 'msg':'cosmicoppai has joined the chat', 'token':'random-value', 'totalUser':1}
+{"typ":'remove', 'userName':'cosmicoppai', 'token':'random-value'} -> {'typ': 'alert', 'msg':'cosmicoppai has left the chat', 'totalUser':0}
+{'typ':'message', 'msg':'yo'} -> {'typ':'message', 'msg':'yo', "userName":'cosmicoppai'}

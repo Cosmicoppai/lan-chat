@@ -55,6 +55,7 @@ func main() {
 	}
 	e := chat.Serve(conn)
 	if e != nil {
+		log.Println("error in chat.Serve", e)
 		return
 	}
 

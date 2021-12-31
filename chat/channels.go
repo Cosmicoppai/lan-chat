@@ -1,9 +1,11 @@
 package chat
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"net"
 	"strings"
@@ -11,10 +13,11 @@ import (
 )
 
 type UserRequest struct {
-	Typ      string `json:"typ"`
-	UserName string `json:"username"`
-	Msg      string `json:"msg"`
-	Token    string `json:"token"`
+	Typ       string `json:"typ"`
+	UserName  string `json:"userName"`
+	Msg       string `json:"msg"`
+	Token     string `json:"token"`
+	TotalUser int    `json:"totalUser"`
 }
 
 type UserData struct {
@@ -22,35 +25,31 @@ type UserData struct {
 	token    string
 }
 
-var Data map[net.Conn]UserData
+var Data = map[net.Conn]UserData{}
 
-func handleChat(conn net.Conn, decodedPayload []byte, byte2 byte, nbs []byte, isFinalBit byte, opCode byte, payloadLen int) {
+func handleChat(conn net.Conn, decodedPayload []byte, isFinalBit byte, opCode byte) {
 
 	var req UserRequest
 	jsonDecodeMsg := json.Unmarshal(decodedPayload, &req)
 	if jsonDecodeMsg != nil {
+		conn.Close()
 		log.Fatalln(jsonDecodeMsg)
-		return
 	}
 	if strings.ToLower(req.Typ) == "add" {
 		addUser(conn, req)
-	} else if strings.ToLower(req.Typ) == "delete" {
-		deleteUser(conn, req)
+	} else if strings.ToLower(req.Typ) == "remove" {
+		deleteUser(conn, req, true)
 	} else {
-
-		var payloadLenBytes []byte
-		if payloadLen == int(byte2&0x7f) {
-			payloadLenBytes = []byte{byte(payloadLen)}
-		} else {
-			payloadLenBytes = []byte{byte2 & 0x7f}
-			payloadLenBytes = append(payloadLenBytes, nbs...)
-		}
-		msg := []byte{isFinalBit | opCode}         // add the first byte consist of isFinalBit + OpCode
-		finMsg := append(msg, payloadLenBytes...)  // add the bytes consist of payloadLen
-		finMsg = append(finMsg, decodedPayload...) // add the message
-		_, err := conn.Write(finMsg)
-		if err != nil {
-			fmt.Println(err)
+		_username := Data[conn].userName
+		if _username != "" {
+			req.UserName = _username
+			finMsg := encodeMsg(isFinalBit, opCode, req)
+			_, err := conn.Write(finMsg)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				conn.Close()
+			}
 		}
 	}
 
@@ -58,35 +57,92 @@ func handleChat(conn net.Conn, decodedPayload []byte, byte2 byte, nbs []byte, is
 
 func addUser(conn net.Conn, request UserRequest) {
 	var udata UserData
-	username := request.UserName
+	username := request.UserName // userName from request
 	if user, exist := Data[conn]; exist {
 		if request.UserName != user.userName {
 			conn.Close()
 			return
+		} else {
+			msg := UserRequest{Typ: "alert",
+				Msg:   fmt.Sprintf("%s has joined the chat", username),
+				Token: user.token, TotalUser: len(Data)}
+			encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+			sendMsg(encodedMsg)
+			return
+
 		}
 	}
 	udata.userName = username
-	rand.Seed(time.Now().UnixNano())
-	b := make([]byte, 64)
-	rand.Read(b)
-	udata.token = fmt.Sprintf("%x", b)[:64]
-	msg := UserRequest{Typ: "alert", Msg: fmt.Sprintf("%s has joined the chat", username), Token: udata.token}
-	encodedMsg := encodeMsg(finalBit&1, TextMessage, msg)
-	sendChat(encodedMsg)
+	udata.token = createToken() // set token
+	Data[conn] = udata
+
+	msg := UserRequest{Typ: "alert",
+		Msg:   fmt.Sprintf("%s has joined the chat", username),
+		Token: udata.token, TotalUser: len(Data)}
+	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+	sendMsg(encodedMsg)
+	fmt.Printf("%s has joined the chat", username)
 
 }
 
-func deleteUser(conn net.Conn, request UserRequest) {
-	if request.Token == Data[conn].token {
-		delete(Data, conn)
+func deleteUser(conn net.Conn, request UserRequest, tokenRequired bool) {
+	if !tokenRequired {
+		_deleteUser(conn)
+	} else {
+		if request.Token == Data[conn].token {
+			_deleteUser(conn)
+		}
 	}
 
 }
 
-func sendChat(msg []byte) {
+func _deleteUser(conn net.Conn) {
+	msg := UserRequest{Typ: "alert", Msg: fmt.Sprintf("%s has left the chat", Data[conn].userName), TotalUser: len(Data) - 1}
+	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+	delete(Data, conn)
+	sendMsg(encodedMsg)
+}
+
+func sendMsg(msg []byte) {
+	for conn, _ := range Data {
+		_, err := conn.Write(msg)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
 
 }
 
 func encodeMsg(isFinalBit byte, opCode byte, msg UserRequest) []byte {
-	return []byte("lol")
+	_msg := []byte{isFinalBit | opCode} // add the first byte consist of isFinalBit + OpCode
+	encodedPayload, _err := json.Marshal(msg)
+	if _err != nil {
+		log.Fatalln(_err)
+	}
+	var payloadLenBytes []byte
+	payloadLen := len(encodedPayload)
+	if payloadLen < 126 {
+		payloadLenBytes = []byte{byte(payloadLen)}
+	} else if len(encodedPayload) <= math.MaxInt16 {
+		payloadLenBytes = []byte{byte(126)}
+		_payloadLenBytes := make([]byte, 2)
+		binary.BigEndian.PutUint16(_payloadLenBytes, uint16(payloadLen))
+		payloadLenBytes = append(payloadLenBytes, _payloadLenBytes...)
+	} else {
+		payloadLenBytes = []byte{byte(127)}
+		_payloadLenBytes := make([]byte, 8)
+		binary.BigEndian.PutUint64(_payloadLenBytes, uint64(payloadLen))
+		payloadLenBytes = append(payloadLenBytes, _payloadLenBytes...)
+	}
+	finMsg := append(_msg, payloadLenBytes...) // add the bytes consist of payloadLen
+	finMsg = append(finMsg, encodedPayload...) // add the message
+	return finMsg
+}
+
+func createToken() string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, 64)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)[:64]
+
 }

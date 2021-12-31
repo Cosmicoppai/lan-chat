@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 )
@@ -13,7 +14,8 @@ func Serve(conn net.Listener) error {
 	for {
 		req, e := conn.Accept()
 		if e != nil {
-			return e
+			log.Println("Error while Accepting request", e)
+			continue
 		}
 		go startChat(req)
 	}
@@ -29,11 +31,12 @@ func startChat(conn net.Conn) {
 		for {
 			byte1, err := read.ReadByte()
 			if err != nil {
-				if err == io.EOF { // if user has closed the connection
+				if err == io.EOF || err.Error() == fmt.Sprintf("read tcp %s->%s: use of closed network connection", conn.LocalAddr().String(), conn.RemoteAddr().String()) { // if user has closed the connection
+					fmt.Println(conn.RemoteAddr().String(), "has closed the connection")
 					break
 				}
 				fmt.Println("Error!: ", err)
-				return
+				continue
 			}
 
 			isFinalBit := byte1 & finalBit
@@ -42,6 +45,7 @@ func startChat(conn net.Conn) {
 			isMaskBitSet := byte2&maskBit != 0 // check if first bit of 2nd byte is set or not
 
 			if !isMaskBitSet {
+				log.Println("mask bit is not set")
 				conn.Close()
 			}
 
@@ -72,16 +76,19 @@ func startChat(conn net.Conn) {
 					decodedPayload[i] = encodedPayLoad[i] ^ maskKey[i%maskKeyLen]
 
 				}
-				handleChat(conn, decodedPayload, byte2, nbs, isFinalBit, opCode, payloadLen)
-
+				handleChat(conn, decodedPayload, isFinalBit, opCode)
 				_, _ = read.Discard(read.Buffered()) // Reset the buffer
 
 			} else {
 				_, _ = read.Discard(read.Buffered())
 			}
 		}
+		deleteUser(conn, UserRequest{}, false)
 		conn.Close()
+		return
 	}
 	// t := http.ResponseWriter(conn)
 	_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
+	log.Fatalln("upgrade not successful")
+	return
 }
