@@ -63,11 +63,7 @@ func addUser(conn net.Conn, request UserRequest) {
 			conn.Close()
 			return
 		} else {
-			msg := UserRequest{Typ: "alert",
-				Msg:   fmt.Sprintf("%s has joined the chat", username),
-				Token: user.token, TotalUser: len(Data)}
-			encodedMsg := encodeMsg(finalBit, TextMessage, msg)
-			sendMsg(encodedMsg)
+			_addUser(username, user.token)
 			return
 
 		}
@@ -76,12 +72,17 @@ func addUser(conn net.Conn, request UserRequest) {
 	udata.token = createToken() // set token
 	Data[conn] = udata
 
+	_addUser(username, udata.token)
+	fmt.Printf("%s has joined the chat", username)
+
+}
+
+func _addUser(username string, token string) {
 	msg := UserRequest{Typ: "alert",
 		Msg:   fmt.Sprintf("%s has joined the chat", username),
-		Token: udata.token, TotalUser: len(Data)}
+		Token: token, TotalUser: len(Data)}
 	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
 	sendMsg(encodedMsg)
-	fmt.Printf("%s has joined the chat", username)
 
 }
 
