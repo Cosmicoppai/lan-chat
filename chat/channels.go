@@ -41,16 +41,9 @@ func handleChat(conn net.Conn, decodedPayload []byte, isFinalBit byte, opCode by
 		deleteUser(conn, req, true)
 	} else if strings.ToLower(req.Typ) == "message" {
 		_username := Data[conn].userName
-		if _username != "" {
-			req.UserName = _username
-			finMsg := encodeMsg(isFinalBit, opCode, req)
-			_, err := conn.Write(finMsg)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				conn.Close()
-			}
-		}
+		req.UserName = _username
+		finMsg := encodeMsg(isFinalBit, opCode, req)
+		sendMsg(finMsg)
 	}
 
 }
@@ -58,31 +51,38 @@ func handleChat(conn net.Conn, decodedPayload []byte, isFinalBit byte, opCode by
 func addUser(conn net.Conn, request UserRequest) {
 	var udata UserData
 	username := request.UserName // userName from request
-	if user, exist := Data[conn]; exist {
-		if request.UserName != user.userName {
+	if username != "" {
+		if _, exist := Data[conn]; exist {
 			conn.Close()
-			return
-		} else {
-			_addUser(username, user.token)
-			return
-
 		}
-	}
-	udata.userName = username
-	udata.token = createToken() // set token
-	Data[conn] = udata
+		udata.userName = username
+		udata.token = createToken() // set token
 
-	_addUser(username, udata.token)
-	fmt.Printf("%s has joined the chat", username)
+		_addUser(conn, udata)
+		fmt.Printf("%s has joined the chat\n", username)
+	}
 
 }
 
-func _addUser(username string, token string) {
+func _addUser(conn net.Conn, udata UserData) {
+
+	// send msg to all connections
 	msg := UserRequest{Typ: "alert",
-		Msg:   fmt.Sprintf("%s has joined the chat", username),
-		Token: token, TotalUser: len(Data)}
+		Msg: fmt.Sprintf("%s has joined the chat", udata.userName), TotalUser: len(Data) + 1}
 	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
 	sendMsg(encodedMsg)
+	Data[conn] = udata
+
+	// send msg to the requested-user with token
+	msgWithToken := UserRequest{Typ: "alert", Msg: fmt.Sprintf("%s has joined the chat", udata.userName),
+		Token:     udata.token,
+		TotalUser: len(Data)}
+	encodedMsg = encodeMsg(finalBit, TextMessage, msgWithToken)
+	write, err := conn.Write(encodedMsg)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Write Error! ", write)
 
 }
 
@@ -105,7 +105,7 @@ func _deleteUser(conn net.Conn) {
 }
 
 func sendMsg(msg []byte) {
-	for conn, _ := range Data {
+	for conn := range Data {
 		_, err := conn.Write(msg)
 		if err != nil {
 			log.Fatalln(err)
