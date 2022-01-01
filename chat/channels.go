@@ -39,7 +39,7 @@ func handleChat(conn net.Conn, decodedPayload []byte, isFinalBit byte, opCode by
 		addUser(conn, req)
 	} else if strings.ToLower(req.Typ) == "remove" {
 		deleteUser(conn, req, true)
-	} else {
+	} else if strings.ToLower(req.Typ) == "message" {
 		_username := Data[conn].userName
 		if _username != "" {
 			req.UserName = _username
