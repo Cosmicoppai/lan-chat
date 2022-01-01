@@ -17,6 +17,6 @@ Servers should be running on [localhost](http://localhost) & [localhost:9000](ht
 Install the golang on your machine
 
 
-add the files mentioned in [notes.txt](notes.txt) in lan-chat/movie
+add the files mentioned in [notes.txt](notes.txt) in [lan-chat/movie](/movie)
 
 Run the Server using ``` go run . ```
