@@ -78,11 +78,10 @@ func _addUser(conn net.Conn, udata UserData) {
 		Token:     udata.token,
 		TotalUser: len(Data)}
 	encodedMsg = encodeMsg(finalBit, TextMessage, msgWithToken)
-	write, err := conn.Write(encodedMsg)
+	_, err := conn.Write(encodedMsg)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Write Error! ", write)
 
 }
 
