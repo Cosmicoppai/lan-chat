@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/cosmicoppai/lan-chat/chat"
+	"lan-chat/chat"
 	"log"
 	"net"
 	"net/http"
-	"os/exec"
 )
 
 func Server(ip string) {
@@ -18,13 +17,14 @@ func Server(ip string) {
 	server.HandleFunc("/get_movie/", GetMovie)         // endpoint to get movie
 	server.HandleFunc("/get_sub/", GetSub)             // endpoint to get sub
 	server.HandleFunc("/get_poster/", GetPoster)       //endpoint to  get current premiering movie poster
-	log.Printf("server is listening on %s", ip)
+	log.Printf("Http server is listening on %s", ip)
 	log.Fatalln(http.ListenAndServe(ip, server))
 }
 
 func getIpAddress() string {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
+		log.Println("Make Sure you're connected to the internet")
 		log.Panic(err)
 	}
 
@@ -34,25 +34,19 @@ func getIpAddress() string {
 }
 
 func main() {
-	cmd := exec.Command("cmd", "/c", `netsh wlan connect name="Laxmi 4"`)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalln(err.Error())
-		return
-	}
-	log.Print(string(output))
 
 	_ipAddress := getIpAddress()
 	if _ipAddress != "" {
 		go Server(_ipAddress) // start a goroutine
 	} else {
-		log.Fatalln("Pass a Valid IP Address")
+		return
 	}
 
 	conn, err_ := net.Listen("tcp", _ipAddress+":9000")
 	if err_ != nil {
 		log.Fatalln(err_)
 	}
+	log.Printf("Socket server is listening on %s", _ipAddress+":9000")
 	e := chat.Serve(conn)
 	if e != nil {
 		log.Println("error in chat.Serve", e)

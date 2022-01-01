@@ -31,3 +31,11 @@ client:- types :- alert, msg
 {"typ":"add", "userName":"cosmicoppai"}  -> {'typ':'alert', 'msg':'cosmicoppai has joined the chat', 'token':'random-value', 'totalUser':1}
 {"typ":'remove', 'userName':'cosmicoppai', 'token':'random-value'} -> {'typ': 'alert', 'msg':'cosmicoppai has left the chat', 'totalUser':0}
 {'typ':'message', 'msg':'yo'} -> {'typ':'message', 'msg':'yo', "userName":'cosmicoppai'}
+
+
+##
+Movie folder should consist of:
+*schedule.txt  -> containing name of the movie
+*movieName.mp4
+*movieName.png
+*movieName.vtt  // subtitles if exist
