@@ -1,8 +1,9 @@
 Dockerfile
+docker-compose.yaml
 .gitignore
+.dockerignore
 notes.txt
-*.mp4
-*.png
-*.jpeg
-*.jpg
-*.vtt
+Readme.md
+test.go
+.idea
+.git

@@ -9,6 +9,6 @@ WORKDIR lan-chat
 
 COPY . .
 
-RUN go build -o start-chat
+RUN go build -o /bin/start-chat
 
 CMD ["start-chat"]

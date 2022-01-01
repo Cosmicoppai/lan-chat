@@ -1,3 +1,3 @@
-module github.com/cosmicoppai/lan-chat
+module lan-chat
 
 go 1.17

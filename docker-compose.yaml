@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  lan-chat:
+    container_name: lan-chat
+    build:
+      context: .
+    volumes:
+      - ./movie:/movie
+    ports:
+      - "80:80"
+      - "9000:9000"
+    restart: on-failure

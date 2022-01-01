@@ -1,1 +1,3 @@
-movie/*.mp4
+movie
+test.go
+.idea
