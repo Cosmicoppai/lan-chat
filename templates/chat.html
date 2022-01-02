@@ -35,7 +35,7 @@
                 <span class="navbar-brand mb-0 h1 mx-auto">Online:</span>
             </div>
         </nav>
-        
+        <!-- chat section -->
         <div class="messages" id="messages">
             <div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender">
                 <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
@@ -80,17 +80,19 @@
             </div>
 
         </div>
+        <!-- ask section -->
         <div class="border-top bg-dark text-light alert alert-dismissible fade show mx-auto text-center" id="fileAsk" role="alert" >
                <span class="me-2" id="fileName"></span>
                 <button type="button" class="btn btn-outline-light mb-2 ms-2" onclick="fileSend()" >Send</button>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>  
+        <!-- textarea -->
         <div class="input-group mb-1 border-top bg-dark " id="messageSender">
             <select id="inputState" class="form-select bg-dark text-light border-0 border-end">
                 <option selected value="text">Plain Text</option>
                 <option value="markdown">Markdown</option>
             </select>
-            <textarea maxlength="2048" type="text"  id="sendMessage" class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
+            <textarea maxlength="5000" minlength="1" type="text"  id="sendMessage" class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
                 placeholder="Type your message..."></textarea>
             <label class=" fileUpload px-2 btn-default bg-dark border-0 border-end ">
                 <img class="mt-2"
