@@ -25,19 +25,20 @@
         <div class="mb-3 mt-3 w-50 h-100 inputName text-center">
             <label for="formGroupExampleInput" class="form-label h3">Enter the Name for your Chatroom</label>
             <input type="text" class="form-control " id="namefield">
-            <a type="button" class="btn btn-outline-light bg-gradient btn-lg mt-2 py-2 px-4" id="chatButton">Start
+            <a type="button" class="btn btn-outline-light bg-gradient btn-lg mt-2 py-2 px-4" id="chatButton"  >Start
                 Chat</a>
         </div>
     </div>
     <div class="cont " id="chat" style="display: none;">
         <nav class="navbar border-bottom">
             <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1 mx-auto">Online:</span>
+                <span class="navbar-brand mb-0 h1 " id="onlineUser"></span>
+                <a type="button" class="btn btn-outline-light bg-gradient px-2" id="leaveButton"   >Leave</a>
             </div>
         </nav>
         <!-- chat section -->
         <div class="messages" id="messages">
-            <div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender">
+            <!-- <div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender">
                 <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
                 <p class=" ms-1 " style="font-family:sans-serif ; font-size: 15px;">Lorem ipsum dolor sit, amet
                     consectetur adipisicing elit. Harum, labore alias numquam,
@@ -77,15 +78,14 @@
                         style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">Sushant</span> has
                         joined the chat</span>
                 </span>
-            </div>
-
+            </div> -->
         </div>
         <!-- ask section -->
-        <div class="border-top bg-dark text-light alert alert-dismissible fade show mx-auto text-center" id="fileAsk" role="alert" >
+        <!-- <div class="border-top bg-dark text-light alert alert-dismissible fade show mx-auto text-center" id="fileAsk" role="alert" >
                <span class="me-2" id="fileName"></span>
                 <button type="button" class="btn btn-outline-light mb-2 ms-2" onclick="fileSend()" >Send</button>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>  
+        </div>   -->
         <!-- textarea -->
         <div class="input-group mb-1 border-top bg-dark " id="messageSender">
             <select id="inputState" class="form-select bg-dark text-light border-0 border-end">
@@ -94,11 +94,11 @@
             </select>
             <textarea maxlength="5000" minlength="1" type="text"  id="sendMessage" class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
                 placeholder="Type your message..."></textarea>
-            <label class=" fileUpload px-2 btn-default bg-dark border-0 border-end ">
+            <!-- <label class=" fileUpload px-2 btn-default bg-dark border-0 border-end ">
                 <img class="mt-2"
                     src="https://img.icons8.com/external-kiranshastry-solid-kiranshastry/2x/ffffff/external-upload-multimedia-kiranshastry-solid-kiranshastry.png"
                     id="imgTextarea" alt=""> <input type="file"  id="file" onchange="fileFunction()"  class="mt-2"   hidden="" style="cursor: pointer;" accept=".png, .jpg, .jpeg">
-            </label>
+            </label> -->
             <button type="button" class="bg-dark mx-2  border-0 px-2" id="sendButton"><img width="30" height="25"
                     src="static/images/send.png" alt="Send" /></button>
         </div>
