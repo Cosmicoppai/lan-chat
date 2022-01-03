@@ -3,8 +3,7 @@ const messages = document.querySelector('#messages')
 const username = document.querySelector('#namefield')
 let token
 
-let host = document.domain
-let ws = new WebSocket(`ws://${host}:9000`);
+let ws = new WebSocket(`ws://${document.domain}:9000`);
 
 ws.onmessage = function (msg) {
     insertMessage(JSON.parse(msg.data))
