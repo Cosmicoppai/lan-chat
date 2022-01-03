@@ -107,7 +107,8 @@ func sendMsg(msg []byte) {
 	for conn := range Data {
 		_, err := conn.Write(msg)
 		if err != nil {
-			log.Fatalln(err)
+			log.Println("Error in sendMsg", err)
+			deleteUser(conn, UserRequest{}, false)
 		}
 	}
 

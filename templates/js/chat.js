@@ -71,7 +71,8 @@ function insertMessage(messageObj) {
                      style="font-family: sans-serif; font-size: 15px;"><span
                     style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">${messageObj.msg}</span>
                      </div>`
-        token = messageObj.token
+        token = messageObj.token !== "" ? messageObj.token : token
+        console.log(token)
         document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
     }
     else if (messageObj.typ === 'message'){
