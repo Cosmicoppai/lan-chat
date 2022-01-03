@@ -3,14 +3,15 @@ const messages = document.querySelector('#messages')
 const username = document.querySelector('#namefield')
 let token
 
-let ws = new WebSocket("ws://localhost:9000/chat");
+let host = document.domain
+let ws = new WebSocket(`ws://${host}:9000`);
 
 ws.onmessage = function (msg) {
     insertMessage(JSON.parse(msg.data))
 };
 
 document.getElementById('chatButton').addEventListener('click', () => {
-    if (username.value != '') {
+    if (username.value !== '') {
         const message = {
             typ: "add",
             userName: username.value,
@@ -39,8 +40,8 @@ document.getElementById('leaveButton').addEventListener('click', () => {
 document.getElementById('sendButton').addEventListener('click', () => {
     let select = document.getElementById("inputState").value
     let result
-    if (input.value != '') {
-        if (select == 'markdown') {
+    if (input.value !== '') {
+        if (select === 'markdown') {
             result = marked.parse(input.value);
         }
         else {
