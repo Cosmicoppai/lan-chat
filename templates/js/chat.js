@@ -65,7 +65,7 @@ function insertMessage(messageObj) {
         return div.firstElementChild;
     }
     let string
-    if (messageObj.typ == 'alert') {
+    if (messageObj.typ === 'alert') {
         string = `<div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;">
                       <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill"
                      style="font-family: sans-serif; font-size: 15px;"><span
@@ -74,15 +74,15 @@ function insertMessage(messageObj) {
         token = messageObj.token
         document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
     }
-    else if (messageObj.typ == 'message'){
-        if (messageObj.userName == username.value) {
+    else if (messageObj.typ === 'message'){
+        if (messageObj.userName === username.value) {
             string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender">
                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
                           <p class=" ms-1 " style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
                           </div>`;
             
         }
-        else if ((messageObj.userName != username.value)) {
+        else if ((messageObj.userName !== username.value)) {
             string = `<div class="container reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
                            id="reciever">
                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
