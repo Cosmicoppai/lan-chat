@@ -144,7 +144,7 @@ body {
 }
 
 .messages {
-    max-height: 520px;
+    max-height: 490px;
     overflow-y: auto;
 }
 
