@@ -3,10 +3,30 @@ const messages = document.querySelector('#messages')
 const username = document.querySelector('#namefield')
 let token
 
+let usernameInput = document.getElementById("namefield");
+let messageInput = document.getElementById("sendMessage");
+
+usernameInput.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+   event.preventDefault();
+   document.getElementById("chatButton").click();
+  }
+});
+
+messageInput.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+   event.preventDefault();
+   document.getElementById("sendButton").click();
+  }
+});
+
 let ws = new WebSocket(`ws://${document.domain}:9000`);
 
 ws.onmessage = function (msg) {
     insertMessage(JSON.parse(msg.data))
+};
+ws.onclose = function () {
+    document.getElementById('messages').innerHTML = "";
 };
 
 document.getElementById('chatButton').addEventListener('click', () => {
@@ -18,22 +38,23 @@ document.getElementById('chatButton').addEventListener('click', () => {
         ws.send(JSON.stringify(message));
         document.getElementById('chat').style.display = 'block'
         document.getElementById('name').style.display = 'none'
+        document.getElementById('homepageButton').style.display = 'none'
     }
 })
 
 
 document.getElementById('leaveButton').addEventListener('click', () => {
-    console.log(token)
     const message = {
         typ: "remove",
         userName: username.value,
         token: token
     }
     ws.send(JSON.stringify(message));
-    username.value ='';
+    username.value = '';
     document.getElementById('messages').innerHTML = "";
     document.getElementById('chat').style.display = 'none'
     document.getElementById('name').style.display = 'block'
+    document.getElementById('homepageButton').style.display = 'block'
 })
 
 document.getElementById('sendButton').addEventListener('click', () => {
@@ -57,8 +78,9 @@ document.getElementById('sendButton').addEventListener('click', () => {
 })
 
 function insertMessage(messageObj) {
-    console.log(messageObj)
-    // Create a div object which will hold the message
+    setTimeout(() => {
+        messages.scrollTop = messages.scrollHeight
+    }, 0)
     let getElementFromString = (string) => {
         let div = document.createElement('div');
         div.innerHTML = string;
@@ -72,30 +94,32 @@ function insertMessage(messageObj) {
                     style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">${messageObj.msg}</span>
                      </div>`
         token = messageObj.token !== "" ? messageObj.token : token
-        console.log(token)
         document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
     }
-    else if (messageObj.typ === 'message'){
+    else if (messageObj.typ === 'message') {
         if (messageObj.userName === username.value) {
-            string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender">
+            string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender"  >
                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                          <p class=" ms-1 " style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
+                          <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
                           </div>`;
-            
+
         }
         else if ((messageObj.userName !== username.value)) {
-            string = `<div class="container reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
-                           id="reciever">
-                          <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                          <p class=" ms-1 " style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
-                          </div>`;
-    
+            string = ` <div class="container  reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
+            id="reciever" >
+            <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+            <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px; ">${messageObj.msg}</p>
+            </div>`;
+
         }
     }
-
 
     // converting element string to dom
     let messageElement = getElementFromString(string);
     // console.log(parameterElement);
     messages.appendChild(messageElement);
+ 
 }
+
+
+
