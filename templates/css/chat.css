@@ -150,13 +150,16 @@ body {
 
 #imgSender {
     max-width: 100%;
-    max-height: 90%;
+    max-height: 50%;
 }
 #imgSender2 {
     max-width: 100%;
     max-height: 90%;
 }
-
+#imgDiv{
+    max-width: 650px;
+    border-radius: 30px;
+}
 #sender {
     max-width: 700px;
     border-radius: 30px;
@@ -304,7 +307,7 @@ textarea {
     }
 
 
-    #sender {
+    #sender,#imgDiv {
         max-width: 600px;
     }
 
@@ -336,7 +339,7 @@ textarea {
         margin-top: -500px;
     }
 
-    #sender {
+    #sender,#imgDiv  {
         max-width: 500px;
     }
 
@@ -373,7 +376,7 @@ textarea {
         max-width: 120px;
     }
 
-    #sender {
+    #sender,#imgDiv  {
         max-width: 380px;
     }
 
@@ -404,7 +407,7 @@ textarea {
         max-width: 20px;
     }
 
-    #sender {
+    #sender,#imgDiv  {
         max-width: 260px;
     }
 
