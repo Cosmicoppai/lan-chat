@@ -1,16 +1,4 @@
-const fileFunction = ()=>{
-        let data = document.getElementById("file").files[0];
-        document.getElementById('fileName').innerHTML = 'Do you want to send '+ data.name
-        setTimeout(() => {
-            document.getElementById('fileAsk').style.display='block'
-        }, 100);
-}
 
-const fileSend =()=>{
-    document.getElementById('fileAsk').style.display='none'
-    document.getElementById('fileName').value = ''
-    let data = document.getElementById("file").value 
-}
 
 
 let modal = document.getElementById("myModal");

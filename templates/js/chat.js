@@ -1,23 +1,25 @@
 const input = document.querySelector('#sendMessage')
 const messages = document.querySelector('#messages')
 const username = document.querySelector('#namefield')
+const image = document.querySelector('#file')
+
 let token
 
 let usernameInput = document.getElementById("namefield");
 let messageInput = document.getElementById("sendMessage");
 
-usernameInput.addEventListener("keyup", function(event) {
-  if (event.keyCode === 13) {
-   event.preventDefault();
-   document.getElementById("chatButton").click();
-  }
+usernameInput.addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("chatButton").click();
+    }
 });
 
-messageInput.addEventListener("keyup", function(event) {
-  if (event.keyCode === 13) {
-   event.preventDefault();
-   document.getElementById("sendButton").click();
-  }
+messageInput.addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("sendButton").click();
+    }
 });
 
 let ws = new WebSocket(`ws://${document.domain}:9000`);
@@ -28,6 +30,24 @@ ws.onmessage = function (msg) {
 ws.onclose = function () {
     document.getElementById('messages').innerHTML = "";
 };
+
+const fileFunction = () => {
+    let data = document.getElementById("file").files[0];
+    document.getElementById('fileName').innerHTML = 'Do you want to send ' + data.name
+    setTimeout(() => {
+        document.getElementById('fileAsk').style.display = 'block'
+    }, 100);
+}
+
+document.getElementById('imgSend').addEventListener('click', function () {
+    const message = {
+        typ: "message",
+        msg: image.files[0]
+    }
+    ws.send(JSON.stringify(message));
+    document.getElementById('fileAsk').style.display = 'none'
+    document.getElementById('fileName').value = ''
+});
 
 document.getElementById('chatButton').addEventListener('click', () => {
     if (username.value !== '') {
@@ -118,7 +138,7 @@ function insertMessage(messageObj) {
     let messageElement = getElementFromString(string);
     // console.log(parameterElement);
     messages.appendChild(messageElement);
- 
+
 }
 
 
