@@ -120,7 +120,7 @@ function insertMessage(messageObj) {
         token = messageObj.token !== "" ? messageObj.token : token
         document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
     }
-    else if (messageObj.typ === 'message') {
+    else if (messageObj.typ === 'txt-msg') {
         if (messageObj.userName === username.value) {
             string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender"  >
                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
@@ -137,8 +137,8 @@ function insertMessage(messageObj) {
 
         }
     }
-    else if (messageObj.typ === 'img') {
-        let arrayBuffer = messageObj.data;
+    else if (messageObj.typ === 'img-msg') {
+        let arrayBuffer = messageObj.msg;
         let bytes = new Uint8Array(arrayBuffer);
         let blob = new Blob([bytes.buffer]);
         let image = document.getElementById('imgSender');
@@ -150,13 +150,13 @@ function insertMessage(messageObj) {
         if (messageObj.userName === username.value) {
             string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2" id="sender">
                       <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
-                      <p class=" ms-1"><img src="../movie/Taxi Driver.png"  id="imgSender" alt="" class="imgSender"></p>
+                      <p class=" ms-1"><img  id="imgSender" alt="" class="imgSender"></p>
                       </div>`;
         }
         else if ((messageObj.userName !== username.value)) {
             string = ` <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2" id="sender">
                        <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
-                       <p class=" ms-1"><img src="../movie/Taxi Driver.png"  id="imgSender" alt="" class="imgSender"></p>
+                       <p class=" ms-1"><img   id="imgSender" alt="" class="imgSender"></p>
                        </div>`;
         }
     }
