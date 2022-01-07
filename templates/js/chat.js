@@ -30,6 +30,8 @@ const fileFunction = () => {
     }, 100);
 }
 
+document.getElementById('file').addEventListener('change', fileFunction);
+
 function startWebsocket() {
     let ws = new WebSocket(`ws://${document.domain}:9000`);
 
@@ -39,9 +41,12 @@ function startWebsocket() {
 
     ws.onclose = function () {
         document.getElementById('messages').innerHTML = "";
-        ws = null
-        setTimeout(startWebsocket, 5000)
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.close();
+        }
+        setTimeout(startWebsocket, 1000)
     };
+
 
     document.getElementById('imgSend').addEventListener('click', function () {
         let file = image.files[0]
@@ -83,8 +88,15 @@ function startWebsocket() {
         document.getElementById('chat').style.display = 'none'
         document.getElementById('name').style.display = 'block'
         document.getElementById('homepageButton').style.display = 'block'
+
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.close();
+        }
+        setTimeout(startWebsocket, 1000)
+
         ws = null
         setTimeout(startWebsocket, 5000)
+
     })
     document.getElementById('sendButton').addEventListener('click', () => {
         let select = document.getElementById("inputState").value
@@ -161,6 +173,6 @@ function startWebsocket() {
         // console.log(parameterElement);
         messages.appendChild(messageElement);
     }
-  }
+}
 
-  startWebsocket();
+startWebsocket();
