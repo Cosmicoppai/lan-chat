@@ -83,11 +83,8 @@ func startChat(conn net.Conn) {
 			}
 		}
 		deleteUser(conn, UserRequest{}, false)
-		conn.Close()
-		return
 	}
 	// t := http.ResponseWriter(conn)
 	_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
 	log.Fatalln("upgrade not successful")
-	return
 }
