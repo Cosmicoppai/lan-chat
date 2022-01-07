@@ -47,7 +47,11 @@ function startWebsocket() {
         let file = image.files[0]
         let reader = new FileReader();
         reader.onload = function (e) {
-            ws.send(reader.result);
+            const message = {
+                typ: "img-msg",
+                msg: reader.result
+            }
+            ws.send(JSON.stringify(message));
         }
         reader.readAsDataURL(file);
         document.getElementById('fileAsk').style.display = 'none'
@@ -92,7 +96,7 @@ function startWebsocket() {
                 result = input.value
             }
             const message = {
-                typ: "message",
+                typ: "txt-msg",
                 msg: result
             }
             ws.send(JSON.stringify(message));
@@ -138,16 +142,15 @@ function startWebsocket() {
         }
         else if (messageObj.typ === 'img-msg') {
             document.getElementById('imgSender').src = messageObj.msg;
-            reader.readAsDataURL(blob);
             if (messageObj.userName === username.value) {
                 string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2" id="sender">
-                          <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                          <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
                           <p class=" ms-1"><img  id="imgSender" alt="" class="imgSender"></p>
                           </div>`;
             }
             else if ((messageObj.userName !== username.value)) {
                 string = ` <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2" id="sender">
-                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
                            <p class=" ms-1"><img   id="imgSender" alt="" class="imgSender"></p>
                            </div>`;
             }
