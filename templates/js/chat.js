@@ -23,7 +23,7 @@ messageInput.addEventListener("keyup", function (event) {
 });
 
 let ws = new WebSocket(`ws://${document.domain}:9000`);
-ws.binaryType = "arraybuffer";
+
 
 ws.onmessage = function (msg) {
     insertMessage(JSON.parse(msg.data))
@@ -43,12 +43,10 @@ const fileFunction = () => {
 document.getElementById('imgSend').addEventListener('click', function () {
     let file = image.files[0]
     let reader = new FileReader();
-    let rawData = new ArrayBuffer();
     reader.onload = function (e) {
-        rawData = e.target.result;
-        ws.send(rawData);
+        ws.send(reader.result);
     }
-    reader.readAsArrayBuffer(file);
+    reader.readAsDataURL(file);
     document.getElementById('fileAsk').style.display = 'none'
     document.getElementById('fileName').value = ''
 });
@@ -138,14 +136,7 @@ function insertMessage(messageObj) {
         }
     }
     else if (messageObj.typ === 'img-msg') {
-        let arrayBuffer = messageObj.msg;
-        let bytes = new Uint8Array(arrayBuffer);
-        let blob = new Blob([bytes.buffer]);
-        let image = document.getElementById('imgSender');
-        let reader = new FileReader();
-        reader.onload = function (e) {
-            image.src = e.target.result;
-        };
+        document.getElementById('imgSender').src = messageObj.msg;
         reader.readAsDataURL(blob);
         if (messageObj.userName === username.value) {
             string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2" id="sender">
