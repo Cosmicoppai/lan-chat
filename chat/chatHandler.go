@@ -26,7 +26,7 @@ func startChat(conn net.Conn) {
 
 	// buff := make([]byte, 4096)      // make buffer of 1024 bytes
 	if connectionUpgrade(conn) { // if connection upgrade is successful
-		read := bufio.NewReaderSize(conn, 5012)
+		read := bufio.NewReaderSize(conn, 5000012)
 
 		for {
 			byte1, err := read.ReadByte()
@@ -59,7 +59,7 @@ func startChat(conn net.Conn) {
 				nbs = append(nbs, []byte{nb1, nb2}...)
 				payloadLen = int(binary.BigEndian.Uint16(nbs))
 			} else {
-				for i := 0; i < 8; i++ { // Read the next 64 bits
+				for i := 0; i < 8; i++ { // Read the next 64 bits(8 byte)
 					_nb, _ := read.ReadByte()
 					nbs = append(nbs, _nb)
 				}
@@ -71,7 +71,6 @@ func startChat(conn net.Conn) {
 				maskKey := remBytes[:maskKeyLen]
 				encodedPayLoad := remBytes[4:]
 				decodedPayload := make([]byte, payloadLen)
-
 				for i := 0; i < payloadLen; i++ {
 					decodedPayload[i] = encodedPayLoad[i] ^ maskKey[i%maskKeyLen]
 

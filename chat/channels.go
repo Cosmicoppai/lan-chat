@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 	"math/rand"
 	"net"
 	"strings"
@@ -39,7 +38,7 @@ func handleChat(conn net.Conn, decodedPayload []byte, isFinalBit byte, opCode by
 		addUser(conn, req)
 	} else if strings.ToLower(req.Typ) == "remove" {
 		deleteUser(conn, req, true)
-	} else if strings.ToLower(req.Typ) == "message" {
+	} else if strings.ToLower(req.Typ) == "txt-msg" || strings.ToLower(req.Typ) == "img-msg" {
 		_username := Data[conn].userName
 		req.UserName = _username
 		finMsg := encodeMsg(isFinalBit, opCode, req)
@@ -124,7 +123,7 @@ func encodeMsg(isFinalBit byte, opCode byte, msg UserRequest) []byte {
 	payloadLen := len(encodedPayload)
 	if payloadLen < 126 {
 		payloadLenBytes = []byte{byte(payloadLen)}
-	} else if len(encodedPayload) <= math.MaxInt16 {
+	} else if len(encodedPayload) <= 65535 {
 		payloadLenBytes = []byte{byte(126)}
 		_payloadLenBytes := make([]byte, 2)
 		binary.BigEndian.PutUint16(_payloadLenBytes, uint16(payloadLen))

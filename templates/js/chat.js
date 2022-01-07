@@ -22,9 +22,17 @@ messageInput.addEventListener("keyup", function (event) {
     }
 });
 
+const fileFunction = () => {
+    let data = document.getElementById("file").files[0];
+    document.getElementById('fileName').innerHTML = 'Do you want to send ' + data.name
+    setTimeout(() => {
+        document.getElementById('fileAsk').style.display = 'block'
+    }, 100);
+}
+
 function startWebsocket() {
     let ws = new WebSocket(`ws://${document.domain}:9000`);
-    
+
     ws.onmessage = function (msg) {
         insertMessage(JSON.parse(msg.data))
     };
@@ -34,15 +42,7 @@ function startWebsocket() {
         ws = null
         setTimeout(startWebsocket, 5000)
     };
-    
-    const fileFunction = () => {
-        let data = document.getElementById("file").files[0];
-        document.getElementById('fileName').innerHTML = 'Do you want to send ' + data.name
-        setTimeout(() => {
-            document.getElementById('fileAsk').style.display = 'block'
-        }, 100);
-    }
-    
+
     document.getElementById('imgSend').addEventListener('click', function () {
         let file = image.files[0]
         let reader = new FileReader();
@@ -57,7 +57,7 @@ function startWebsocket() {
         document.getElementById('fileAsk').style.display = 'none'
         document.getElementById('fileName').value = ''
     });
-    
+
     document.getElementById('chatButton').addEventListener('click', () => {
         if (username.value !== '') {
             const message = {
@@ -77,6 +77,7 @@ function startWebsocket() {
             token: token
         }
         ws.send(JSON.stringify(message));
+        ws.close()
         username.value = '';
         document.getElementById('messages').innerHTML = "";
         document.getElementById('chat').style.display = 'none'
@@ -84,7 +85,7 @@ function startWebsocket() {
         document.getElementById('homepageButton').style.display = 'block'
         ws = null
         setTimeout(startWebsocket, 5000)
-    })  
+    })
     document.getElementById('sendButton').addEventListener('click', () => {
         let select = document.getElementById("inputState").value
         let result
@@ -129,7 +130,7 @@ function startWebsocket() {
                               <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
                               <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
                               </div>`;
-    
+
             }
             else if ((messageObj.userName !== username.value)) {
                 string = ` <div class="container  reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
@@ -137,7 +138,7 @@ function startWebsocket() {
                 <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
                 <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px; ">${messageObj.msg}</p>
                 </div>`;
-    
+
             }
         }
         else if (messageObj.typ === 'img-msg') {
