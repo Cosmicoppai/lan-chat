@@ -23,6 +23,7 @@ messageInput.addEventListener("keyup", function (event) {
 });
 
 let ws = new WebSocket(`ws://${document.domain}:9000`);
+ws.binaryType = "arraybuffer";
 
 ws.onmessage = function (msg) {
     insertMessage(JSON.parse(msg.data))
@@ -40,11 +41,14 @@ const fileFunction = () => {
 }
 
 document.getElementById('imgSend').addEventListener('click', function () {
-    const message = {
-        typ: "message",
-        msg: image.files[0]
+    let file = image.files[0]
+    let reader = new FileReader();
+    let rawData = new ArrayBuffer();
+    reader.onload = function (e) {
+        rawData = e.target.result;
+        ws.send(rawData);
     }
-    ws.send(JSON.stringify(message));
+    reader.readAsArrayBuffer(file);
     document.getElementById('fileAsk').style.display = 'none'
     document.getElementById('fileName').value = ''
 });
@@ -116,7 +120,7 @@ function insertMessage(messageObj) {
         token = messageObj.token !== "" ? messageObj.token : token
         document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
     }
-    else if (messageObj.typ === 'message') {
+    else if (messageObj.typ === 'txt-msg') {
         if (messageObj.userName === username.value) {
             string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender"  >
                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
@@ -131,6 +135,29 @@ function insertMessage(messageObj) {
             <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px; ">${messageObj.msg}</p>
             </div>`;
 
+        }
+    }
+    else if (messageObj.typ === 'img-msg') {
+        let arrayBuffer = messageObj.msg;
+        let bytes = new Uint8Array(arrayBuffer);
+        let blob = new Blob([bytes.buffer]);
+        let image = document.getElementById('imgSender');
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            image.src = e.target.result;
+        };
+        reader.readAsDataURL(blob);
+        if (messageObj.userName === username.value) {
+            string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2" id="sender">
+                      <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                      <p class=" ms-1"><img  id="imgSender" alt="" class="imgSender"></p>
+                      </div>`;
+        }
+        else if ((messageObj.userName !== username.value)) {
+            string = ` <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2" id="sender">
+                       <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">Sushant</h4>
+                       <p class=" ms-1"><img   id="imgSender" alt="" class="imgSender"></p>
+                       </div>`;
         }
     }
 
