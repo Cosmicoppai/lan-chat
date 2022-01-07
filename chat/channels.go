@@ -54,11 +54,15 @@ func addUser(conn net.Conn, request UserRequest) {
 		if _, exist := Data[conn]; exist {
 			conn.Close()
 		}
-		udata.userName = username
-		udata.token = createToken() // set token
+		if !checkUserName(username) {
+			udata.userName = username
+			udata.token = createToken() // set token
 
-		_addUser(conn, udata)
-		fmt.Printf("%s has joined the chat\n", username)
+			_addUser(conn, udata)
+			fmt.Printf("%s has joined the chat\n", username)
+		} else {
+			sendSingleMsg(conn, UserRequest{Typ: "error", Msg: "User-name already exists !"})
+		}
 	}
 
 }
@@ -76,23 +80,28 @@ func _addUser(conn net.Conn, udata UserData) {
 	msgWithToken := UserRequest{Typ: "alert", Msg: fmt.Sprintf("%s has joined the chat", udata.userName),
 		Token:     udata.token,
 		TotalUser: len(Data)}
-	encodedMsg = encodeMsg(finalBit, TextMessage, msgWithToken)
-	_, err := conn.Write(encodedMsg)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	sendSingleMsg(conn, msgWithToken)
 
+}
+
+func checkUserName(userName string) bool {
+	for _, user := range Data {
+		if user.userName == userName {
+			return true
+		}
+	}
+	return false
 }
 
 func deleteUser(conn net.Conn, request UserRequest, tokenRequired bool) {
 	if !tokenRequired {
 		_deleteUser(conn)
+	} else if request.Token == Data[conn].token {
+		sendSingleMsg(conn, UserRequest{Typ: "success", Msg: "Successfully left the chat"})
+		_deleteUser(conn)
 	} else {
-		if request.Token == Data[conn].token {
-			_deleteUser(conn)
-		}
+		sendSingleMsg(conn, UserRequest{Typ: "error", Msg: "Invalid Token"})
 	}
-
 }
 
 func _deleteUser(conn net.Conn) {
@@ -111,6 +120,14 @@ func sendMsg(msg []byte) {
 		}
 	}
 
+}
+
+func sendSingleMsg(conn net.Conn, msg UserRequest) {
+	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+	_, err := conn.Write(encodedMsg)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func encodeMsg(isFinalBit byte, opCode byte, msg UserRequest) []byte {
