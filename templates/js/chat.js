@@ -29,6 +29,7 @@ const fileFunction = () => {
         document.getElementById('fileAsk').style.display = 'block'
     }, 100);
 }
+
 document.getElementById('file').addEventListener('change', fileFunction);
 
 function startWebsocket() {
@@ -81,15 +82,21 @@ function startWebsocket() {
             token: token
         }
         ws.send(JSON.stringify(message));
+        ws.close()
         username.value = '';
         document.getElementById('messages').innerHTML = "";
         document.getElementById('chat').style.display = 'none'
         document.getElementById('name').style.display = 'block'
         document.getElementById('homepageButton').style.display = 'block'
+
         if (ws.readyState === WebSocket.OPEN) {
             ws.close();
         }
         setTimeout(startWebsocket, 1000)
+
+        ws = null
+        setTimeout(startWebsocket, 5000)
+
     })
     document.getElementById('sendButton').addEventListener('click', () => {
         let select = document.getElementById("inputState").value
