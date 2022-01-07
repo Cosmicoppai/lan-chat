@@ -29,6 +29,7 @@ const fileFunction = () => {
         document.getElementById('fileAsk').style.display = 'block'
     }, 100);
 }
+document.getElementById('file').addEventListener('change', fileFunction);
 
 function startWebsocket() {
     let ws = new WebSocket(`ws://${document.domain}:9000`);
