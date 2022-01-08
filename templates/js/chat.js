@@ -34,11 +34,6 @@ function startWebsocket() {
         location.reload()
     };
 
-    ws.addEventListener('error', function (event) {
-        location.reload()
-      });
-
-    
     document.getElementById('file').addEventListener('change',() => {
         let data = document.getElementById("file").files[0];
         let getElementFromString = (string) => {
@@ -57,9 +52,6 @@ function startWebsocket() {
     }
     );
 
-    document.getElementById('closer').addEventListener('click',function clear() {
-        document.getElementById('dataName').innerHTML = ""
-    })
     document.getElementById('imgSend').addEventListener('click', ()=> {
         let file = image.files[0]
         let fsize = file.size;
