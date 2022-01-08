@@ -22,46 +22,55 @@ messageInput.addEventListener("keyup", function (event) {
     }
 });
 
-const fileFunction = () => {
-    let data = document.getElementById("file").files[0];
-    document.getElementById('fileName').innerHTML = 'Do you want to send ' + data.name
-    setTimeout(() => {
-        document.getElementById('fileAsk').style.display = 'block'
-    }, 100);
-}
-
-document.getElementById('file').addEventListener('change', fileFunction);
 
 function startWebsocket() {
     let ws = new WebSocket(`ws://${document.domain}:9000`);
-
     ws.onmessage = function (msg) {
         insertMessage(JSON.parse(msg.data))
     };
 
     ws.onclose = function () {
-        document.getElementById('messages').innerHTML = "";
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.close();
-        }
-        setTimeout(startWebsocket, 1000)
+        document.getElementById('messages').innerHTML = ""
+        location.reload()
     };
 
-
-    document.getElementById('imgSend').addEventListener('click', function () {
-        let file = image.files[0]
-        let reader = new FileReader();
-        reader.onload = function (e) {
-            const message = {
-                typ: "img-msg",
-                msg: reader.result
-            }
-            ws.send(JSON.stringify(message));
+    document.getElementById('file').addEventListener('change',() => {
+        let data = document.getElementById("file").files[0];
+        let getElementFromString = (string) => {
+            let div = document.createElement('div');
+            div.innerHTML = string;
+            return div.firstElementChild;
         }
-        reader.readAsDataURL(file);
-        document.getElementById('fileAsk').style.display = 'none'
-        document.getElementById('fileName').value = ''
-    });
+        let string = `<div>
+                        <span class="me-2" id="fileName">Do you want to send ${data.name}</span>
+                      </div>`
+        let messageElement = getElementFromString(string);
+        document.getElementById("dataName").appendChild(messageElement);
+        setTimeout(() => {
+            document.getElementById('fileAsk').style.display = 'block'
+        }, 1000);
+    }
+    );
+
+    document.getElementById('imgSend').addEventListener('click', ()=> {
+        let file = image.files[0]
+        let fsize = file.size;
+        let size = Math.round((fsize / 1024));
+        if (size < 5121) {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                const message = {
+                    typ: "img-msg",
+                    msg: reader.result
+                }
+                ws.send(JSON.stringify(message));
+            }
+            reader.readAsDataURL(file);
+            document.getElementById('fileAsk').style.display = 'none'
+            document.getElementById('dataName').innerHTML = ""
+        }
+        // console.log(file)
+    })
 
     document.getElementById('chatButton').addEventListener('click', () => {
         if (username.value !== '') {
@@ -82,21 +91,9 @@ function startWebsocket() {
             token: token
         }
         ws.send(JSON.stringify(message));
-        ws.close()
         username.value = '';
         document.getElementById('messages').innerHTML = "";
-        document.getElementById('chat').style.display = 'none'
-        document.getElementById('name').style.display = 'block'
-        document.getElementById('homepageButton').style.display = 'block'
-
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.close();
-        }
-        setTimeout(startWebsocket, 1000)
-
-        ws = null
-        setTimeout(startWebsocket, 5000)
-
+        setTimeout(location.reload(), 1000)
     })
     document.getElementById('sendButton').addEventListener('click', () => {
         let select = document.getElementById("inputState").value
@@ -118,6 +115,7 @@ function startWebsocket() {
         }
     })
     function insertMessage(messageObj) {
+
         setTimeout(() => {
             messages.scrollTop = messages.scrollHeight
         }, 0)
@@ -154,19 +152,20 @@ function startWebsocket() {
             }
         }
         else if (messageObj.typ === 'img-msg') {
-            document.getElementById('imgSender').src = messageObj.msg;
             if (messageObj.userName === username.value) {
-                string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2" id="sender">
-                          <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                          <p class=" ms-1"><img  id="imgSender" alt="" class="imgSender"></p>
-                          </div>`;
+                string = `  <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2 " id="sender">
+                            <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                            <p class=" mx-auto ms-1" ><img width="660" height="325" src=${messageObj.msg} onclick="imgClick()" id="imgSender" alt="" class="imgSender mx-auto"></p>
+                            </div> `;
             }
             else if ((messageObj.userName !== username.value)) {
-                string = ` <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2" id="sender">
-                           <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                           <p class=" ms-1"><img   id="imgSender" alt="" class="imgSender"></p>
-                           </div>`;
+                string = `  <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2 " id="sender">
+                            <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                            <p class=" ms-1 mx-auto" ><img  width="660" height="325"src=${messageObj.msg} onclick="imgClick()" id="imgSender" alt="" class="imgSender mx-auto"></p>
+                            </div> `;
             }
+
+
         }
         // converting element string to dom
         let messageElement = getElementFromString(string);

@@ -57,10 +57,10 @@
                     Pariatur eaque temporibus repellendus quidem totam aliquam molestiae tempore, nobis harum iure
                     dolores!</p>
             </div>-->
-             <!-- <div class="container reciever mt-2 mb-2 float-end" id="imgDiv">
-                <img src="../movie/Taxi Driver.png"  id="imgSender" alt="" class="rounded border border-light imgSender" >
+            <!-- <div class="container reciever mt-2 mb-2 float-end" id="imgDiv">
+                <img src="../movie/Taxi Driver.png"  id="imgSender" height="700px" alt="" class="rounded border border-light imgSender" >
             </div>  -->
-             <!-- <div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;">
+            <!-- <div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;">
                 <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill"
                     style="font-family: sans-serif; font-size: 15px;"><span
                         style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">Sushant</span> has
@@ -92,9 +92,13 @@
         <!-- ask section -->
         <div class="border-top bg-dark text-light alert alert-dismissible fade show mx-auto text-center" id="fileAsk"
             role="alert">
-            <span class="me-2" id="fileName"></span>
-            <button type="button" class="btn btn-outline-light mb-2 ms-2" id="imgSend">Send</button>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div id="dataName">
+
+            </div>
+            <button type="button" class="btn btn-outline-light mb-2 ms-2"
+                id="imgSend">Send</button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" id="closer"
+                aria-label="Close"></button>
         </div>
         <!-- textarea -->
         <div class="input-group mb-1 border-top bg-dark " id="messageSender">
@@ -102,14 +106,14 @@
                 <option selected value="text">Plain Text</option>
                 <option value="markdown">Markdown</option>
             </select>
-            <textarea maxlength="5000" minlength="1" type="text" id="sendMessage"
+            <textarea maxlength="3000" minlength="1" type="text" id="sendMessage"
                 class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
                 placeholder="Type your message..."></textarea>
             <label class=" fileUpload px-2 btn-default bg-dark border-0 border-end ">
                 <img class="mt-2"
                     src="https://img.icons8.com/external-kiranshastry-solid-kiranshastry/2x/ffffff/external-upload-multimedia-kiranshastry-solid-kiranshastry.png"
-                    id="imgTextarea" alt=""> <input type="file" id="file"  class="mt-2"
-                    hidden="" style="cursor: pointer;" accept=".png, .jpg, .jpeg">
+                    id="imgTextarea" alt=""> <input type="file" id="file" class="mt-2" hidden=""
+                    style="cursor: pointer;" accept=".png, .jpg">
             </label>
             <button type="button" class="bg-dark mx-2  border-0 px-2" id="sendButton"><img width="30" height="25"
                     src="static/images/send.png" alt="Send" /></button>
@@ -117,9 +121,9 @@
     </div>
 
 </body>
+
 <script src="static/js/markdown.js"></script>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
-<script src="static/js/imgModal.js"></script>
 <script type="text/javascript">
 
     let textarea = document.querySelector('textarea');
@@ -129,7 +133,7 @@
         setTimeout(function () {
             el.style.cssText = 'height:auto; padding:0';
             el.style.cssText = 'height:' + el.scrollHeight + 'px';
-            let a = 500
+            let a = 400
             document.getElementById('fileAsk').style.marginTop = '-' + a + 'px'
         }, 0);
     }
@@ -149,5 +153,6 @@
     }, 1800000);
 </script>
 <script src="static/js/chat.js"></script>
+<script src="static/js/imgModal.js"></script>
 
 </html>
