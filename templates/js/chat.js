@@ -34,25 +34,25 @@ function startWebsocket() {
         location.reload()
     };
 
-    document.getElementById('file').addEventListener('change',() => {
-        let data = document.getElementById("file").files[0];
-        let getElementFromString = (string) => {
-            let div = document.createElement('div');
-            div.innerHTML = string;
-            return div.firstElementChild;
-        }
-        let string = `<div>
-                        <span class="me-2" id="fileName">Do you want to send ${data.name}</span>
-                      </div>`
-        let messageElement = getElementFromString(string);
-        document.getElementById("dataName").appendChild(messageElement);
-        setTimeout(() => {
-            document.getElementById('fileAsk').style.display = 'block'
-        }, 1000);
-    }
-    );
+    // document.getElementById('file').addEventListener('change',() => {
+    //     let data = document.getElementById("file").files[0];
+    //     let getElementFromString = (string) => {
+    //         let div = document.createElement('div');
+    //         div.innerHTML = string;
+    //         return div.firstElementChild;
+    //     }
+    //     let string = `<div>
+    //                     <span class="me-2" id="fileName">Do you want to send ${data.name}</span>
+    //                   </div>`
+    //     let messageElement = getElementFromString(string);
+    //     document.getElementById("dataName").appendChild(messageElement);
+    //     setTimeout(() => {
+    //         document.getElementById('fileAsk').style.display = 'block'
+    //     }, 1000);
+    // }
+    // );
 
-    document.getElementById('imgSend').addEventListener('click', ()=> {
+    document.getElementById('file').addEventListener('change', ()=> {
         let file = image.files[0]
         let fsize = file.size;
         let size = Math.round((fsize / 1024));
