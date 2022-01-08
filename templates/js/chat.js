@@ -31,7 +31,7 @@ function startWebsocket() {
 
     ws.onclose = function () {
         document.getElementById('messages').innerHTML = ""
-        location.reload()
+        // location.reload()
     };
 
     // document.getElementById('file').addEventListener('change',() => {
@@ -54,6 +54,7 @@ function startWebsocket() {
 
     document.getElementById('file').addEventListener('change', ()=> {
         let file = image.files[0]
+        console.log(file)
         let fsize = file.size;
         let size = Math.round((fsize / 1024));
         if (size < 5121) {
@@ -66,6 +67,7 @@ function startWebsocket() {
                 ws.send(JSON.stringify(message));
             }
             reader.readAsDataURL(file);
+            image.value =''
             document.getElementById('fileAsk').style.display = 'none'
             document.getElementById('dataName').innerHTML = ""
         }
