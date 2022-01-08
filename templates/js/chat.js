@@ -63,7 +63,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
         }
     }
     document.getElementById('file').addEventListener('change', () => {
-        if (confirm('Do you want to send this file') == true) {
+        if (confirm('Do you want to send this file?') == true) {
             let file = image.files[0]
             let fsize = file.size;
             let size = Math.round((fsize / 1024));
