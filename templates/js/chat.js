@@ -23,69 +23,67 @@ messageInput.addEventListener("keyup", function (event) {
 });
 
 
-function startWebsocket() {
+
+
+
+
+document.getElementById('chatButton').addEventListener('click', () => {
     let ws = new WebSocket(`ws://${document.domain}:9000`);
+    let data
+    ws.onopen = function () {
+        addUser()
+    }
     ws.onmessage = function (msg) {
-        insertMessage(JSON.parse(msg.data))
+        data = JSON.parse(msg.data)
+        if (data.typ === 'error') {
+            document.getElementById('error').style.display = 'block'
+        }
+        else {
+            insertMessage(JSON.parse(msg.data))
+            document.getElementById('chat').style.display = 'block'
+            document.getElementById('name').style.display = 'none'
+            document.getElementById('error').style.display = 'none'
+            document.getElementById('homepageButton').style.display = 'none'
+        }
     };
 
     ws.onclose = function () {
         document.getElementById('messages').innerHTML = ""
-        // location.reload()
+        location.reload()
     };
 
-    // document.getElementById('file').addEventListener('change',() => {
-    //     let data = document.getElementById("file").files[0];
-    //     let getElementFromString = (string) => {
-    //         let div = document.createElement('div');
-    //         div.innerHTML = string;
-    //         return div.firstElementChild;
-    //     }
-    //     let string = `<div>
-    //                     <span class="me-2" id="fileName">Do you want to send ${data.name}</span>
-    //                   </div>`
-    //     let messageElement = getElementFromString(string);
-    //     document.getElementById("dataName").appendChild(messageElement);
-    //     setTimeout(() => {
-    //         document.getElementById('fileAsk').style.display = 'block'
-    //     }, 1000);
-    // }
-    // );
-
-    document.getElementById('file').addEventListener('change', ()=> {
-        let file = image.files[0]
-        console.log(file)
-        let fsize = file.size;
-        let size = Math.round((fsize / 1024));
-        if (size < 5121) {
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                const message = {
-                    typ: "img-msg",
-                    msg: reader.result
-                }
-                ws.send(JSON.stringify(message));
-            }
-            reader.readAsDataURL(file);
-            image.value =''
-            document.getElementById('fileAsk').style.display = 'none'
-            document.getElementById('dataName').innerHTML = ""
-        }
-        // console.log(file)
-    })
-
-    document.getElementById('chatButton').addEventListener('click', () => {
+    function addUser() {
         if (username.value !== '') {
             const message = {
                 typ: "add",
                 userName: username.value,
             }
             ws.send(JSON.stringify(message));
-            document.getElementById('chat').style.display = 'block'
-            document.getElementById('name').style.display = 'none'
-            document.getElementById('homepageButton').style.display = 'none'
+
         }
+    }
+    document.getElementById('file').addEventListener('change', () => {
+        if (confirm('Do you want to send this file') == true) {
+            let file = image.files[0]
+            let fsize = file.size;
+            let size = Math.round((fsize / 1024));
+            if (size < 5121) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    const message = {
+                        typ: "img-msg",
+                        msg: reader.result
+                    }
+                    ws.send(JSON.stringify(message));
+                }
+                reader.readAsDataURL(file);
+                image.value = ''
+            }
+          } else {
+            image.value = ''
+          }
     })
+
     document.getElementById('leaveButton').addEventListener('click', () => {
         const message = {
             typ: "remove",
@@ -117,7 +115,7 @@ function startWebsocket() {
         }
     })
     function insertMessage(messageObj) {
-
+        let imgSrc
         setTimeout(() => {
             messages.scrollTop = messages.scrollHeight
         }, 0)
@@ -129,42 +127,43 @@ function startWebsocket() {
         let string
         if (messageObj.typ === 'alert') {
             string = `<div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;">
-                          <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill"
-                         style="font-family: sans-serif; font-size: 15px;"><span
-                        style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">${messageObj.msg}</span>
-                         </div>`
+                              <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill"
+                             style="font-family: sans-serif; font-size: 15px;"><span
+                            style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">${messageObj.msg}</span>
+                             </div>`
             token = messageObj.token !== "" ? messageObj.token : token
             document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
         }
         else if (messageObj.typ === 'txt-msg') {
             if (messageObj.userName === username.value) {
                 string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender"  >
-                              <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                              <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
-                              </div>`;
+                                  <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                                  <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
+                                  </div>`;
 
             }
             else if ((messageObj.userName !== username.value)) {
                 string = ` <div class="container  reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
-                id="reciever" >
-                <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px; ">${messageObj.msg}</p>
-                </div>`;
+                    id="reciever" >
+                    <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                    <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px; ">${messageObj.msg}</p>
+                    </div>`;
 
             }
         }
         else if (messageObj.typ === 'img-msg') {
+           imgSrc = messageObj.msg
             if (messageObj.userName === username.value) {
                 string = `  <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2 " id="sender">
-                            <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                            <p class=" mx-auto ms-1" ><img width="660" height="325" src=${messageObj.msg} onclick="imgClick()" id="imgSender" alt="" class="imgSender mx-auto"></p>
-                            </div> `;
+                                <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                                <p class=" mx-auto ms-1" ><img width="660" height="325" src=${messageObj.msg} onclick="imgClick('${messageObj.msg}')" id="imgSender" alt="" class="imgSender mx-auto"></p>
+                                </div> `;
             }
             else if ((messageObj.userName !== username.value)) {
                 string = `  <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2 " id="sender">
-                            <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                            <p class=" ms-1 mx-auto" ><img  width="660" height="325"src=${messageObj.msg} onclick="imgClick()" id="imgSender" alt="" class="imgSender mx-auto"></p>
-                            </div> `;
+                                <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                                <p class=" ms-1 mx-auto" ><img  width="660" height="325" src=${messageObj.msg} onclick="imgClick('${messageObj.msg}')" id="imgSender" alt="" class="imgSender mx-auto"></p>
+                                </div> `;
             }
 
 
@@ -173,7 +172,8 @@ function startWebsocket() {
         let messageElement = getElementFromString(string);
         // console.log(parameterElement);
         messages.appendChild(messageElement);
-    }
-}
 
-startWebsocket();
+    }
+})
+
+
