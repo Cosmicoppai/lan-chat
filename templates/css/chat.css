@@ -178,10 +178,7 @@ select option {
     color: rgb(255, 255, 255);
 }
 
-#fileAsk {
-    margin-top: -60px;
-    display: none;
-}
+
 
 textarea {
     font-size: 14px;
@@ -352,10 +349,6 @@ textarea {
     .chatRoom {
         width: 80%;
         height: 40%;
-    }
-
-    #fileAsk {
-        margin-top: -100px;
     }
 
     #imgTextarea {
