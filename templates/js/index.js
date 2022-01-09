@@ -13,10 +13,20 @@ const switchTheme = (e) => {
 }
 toggleSwitch.addEventListener('change', switchTheme, false);
 const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+const theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark'
+if (window?.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (theme === 'dark') {
+        toggleSwitch.checked = true;
+        document.getElementById('light').style.opacity = '0.5'
+    }
+}
+else if (window?.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.setAttribute('data-theme', 'light');
+}
 
 if (currentTheme) {
     document.documentElement.setAttribute('data-theme', currentTheme);
-
     if (currentTheme === 'dark') {
         toggleSwitch.checked = true;
         document.getElementById('light').style.opacity = '0.5'
@@ -26,9 +36,8 @@ if (currentTheme) {
     }
 }
 
-
 Object.defineProperty(String.prototype, 'capitalize', {
-    value: function() {
+    value: function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     },
     enumerable: false

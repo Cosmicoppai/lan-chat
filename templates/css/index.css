@@ -1,7 +1,7 @@
 * {
   box-sizing: border-box;
 }
-@media (prefers-color-scheme: light) {
+
   :root {
     --primary-color: #302ae6;
     --secondary-color: #536390;
@@ -10,10 +10,9 @@
     --heading-color: #292922;
     --foreground-color: white;
   }
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
+
+[data-theme="dark"] {
     --primary-color: #9a97f3;
     --secondary-color: #818cab;
     --font-color: #ededed;
@@ -21,16 +20,8 @@
     --heading-color: #818cab;
     --foreground-color: white;
   }
-}
 
-[data-theme="dark"] {
-  --primary-color: #9a97f3;
-  --secondary-color: #818cab;
-  --font-color: #ededed;
-  --bg-color: #171717;
-  --heading-color: #818cab;
-  --foreground-color: white;
-}
+
 html {
   overflow-x: revert;
   overflow-y: revert;
