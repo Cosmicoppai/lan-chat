@@ -27,9 +27,6 @@
         <div class="mb-3 mt-3 w-50 h-100 inputName text-center">
             <label for="formGroupExampleInput" class="form-label h3">Enter the Name for your Chatroom</label>
             <input type="text" class="form-control " id="namefield">
-            <div class="invalid-feedback my-2" id="error" style="color: red; display: none;">
-               Username already exist!!
-              </div>
             <a type="button" class="btn btn-outline-light bg-gradient btn-lg mt-2 py-2 px-4" id="chatButton">Start
                 Chat</a>
         </div>
@@ -45,10 +42,10 @@
         <div class="messages" id="messages">
         </div>
         <!-- textarea -->
-        <div class="input-group mb-1 border-top bg-dark " id="messageSender">
-            <select id="inputState" class="form-select bg-dark text-light border-0 border-end">
-                <option selected value="text">Plain Text</option>
-                <option value="markdown">Markdown</option>
+        <div class="input-group  mb-1 border-top bg-dark " id="messageSender">
+            <select id="inputState" class="form-select bg-dark text-light border-0 border-end font-monospace">
+                <option  class="fs-4 " selected value="text">Plain Text</option>
+                <option  class="fs-4" value="markdown">Markdown</option>
             </select>
             <textarea maxlength="3000" minlength="1" type="text" id="sendMessage"
                 class="form-control bg-dark bg-gradient text-light border-0 border-end py-3"
@@ -65,7 +62,7 @@
     </div>
 
 </body>
-
+<script src="static/js/jquery.js"></script>
 <script src="static/js/markdown.js"></script>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
