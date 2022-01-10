@@ -3,7 +3,8 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    color: white;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    color: #F3E5AB;
     height: 100vh;
     width: 100vw;
 }
@@ -34,7 +35,7 @@ html {
     color: #fff;
     font-family: "Zefani";
     font-family: 'Dancing Script';
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #f80606, 0 0 35px #f80606, 0 0 40px #f80606;
+    text-shadow: 0 0 5px #F3E5AB, 0 0 10px #F3E5AB, 0 0 15px #F3E5AB, 0 0 20px #ff6f6f, 0 0 35px #ff6f6f, 0 0 40px #ff6f6f;
 }
 
 .logo b.active span {
@@ -162,6 +163,16 @@ html {
     color: #2e2d2d;
 }
 
+#leaveButton,#chatButton,#homepageButton{
+    color: #F3E5AB;
+    border: 2px solid #F3E5AB;
+    background-color: transparent;
+}
+#leaveButton:hover,#chatButton:hover,#homepageButton:hover{
+    color: white;
+    border: 2px solid white;
+    background-color: #F3E5AB;
+}
 .chatRoom {
     width: 40%;
     height: 50%;
@@ -202,7 +213,7 @@ html {
 
 #sendMessage {
     max-height: 180px;
-    color: #FFF;
+    color: #FFDEAD;
     background: transparent;
 }
 
@@ -247,11 +258,11 @@ html {
 }
 
 select option {
-    background: rgba(0, 0, 0, 0.801);
+    background: transparent;
 }
 
 .form-control::-webkit-input-placeholder {
-    color: rgb(255, 255, 255);
+    color: #F3E5AB;
 }
 
 
@@ -326,7 +337,7 @@ textarea {
     width: 80%;
     max-width: 700px;
     text-align: center;
-    color: #ccc;
+    color: #F3E5AB;
     padding: 10px 0;
     height: 150px;
 }
@@ -351,7 +362,7 @@ textarea {
     position: absolute;
     top: 15px;
     right: 35px;
-    color: #f1f1f1;
+    color: #F3E5AB;
     font-size: 40px;
     font-weight: bold;
     transition: 0.3s;
@@ -359,7 +370,7 @@ textarea {
 
 .close:hover,
 .close:focus {
-    color: #bbb;
+    color: #F3E5AB;
     text-decoration: none;
     cursor: pointer;
 }
