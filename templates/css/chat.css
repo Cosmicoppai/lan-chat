@@ -7,7 +7,9 @@ body {
     height: 100vh;
     width: 100vw;
 }
-
+html {
+    scroll-behavior: smooth;
+  }
 ::-webkit-scrollbar {
     width: 0;
     background: transparent;
@@ -219,6 +221,7 @@ body {
 .messages {
     max-height: 490px;
     overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 #imgSender {

@@ -26,7 +26,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-3 ms-5 mb-lg-0 ">
                     <li class="nav-item">
-                        <a class="nav-link  fs-5" aria-current="page" id="contactName" href="/suggestion">Suggestion</a>
+                        <a class="nav-link  fs-5" aria-current="page" id="contactName" href="/chat">ChatRoom</a>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -71,13 +71,12 @@
     <span class=" d-flex align-items-center justify-content-center mt-1  ms-2"> You can request for your favorite movie.
         Send
         us your movie suggestion from Suggestion section above</span>
-<hr>
-<div class="container mt-4 text-center">
-    <span id="movieName" class="fw-bolder display-4 text-center">Laxmi Chatroom</span>
-    <div class="container mt-4 d-flex align-items-center justify-content-center  px-5 mb-5 ">
-        <a  type="button" class="btn  btn-lg py-2 px-4" id="chatShift" onclick="redirect();">Move to ChatRoom</a>
-    </div>
-</div>
+<footer class="my-3 pt-5 text-muted text-center text-small">
+    <p class="mb-1">©Laxmi Chat/Movie Room</p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a id="contactName" class="fs-4"  href="/suggestion">Suggestion</a></li>
+    </ul>
+  </footer>
 </body>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="static/js/index.js"></script>
@@ -88,7 +87,6 @@
 const cTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
 if (cTheme) {
     document.documentElement.setAttribute('data-theme', currentTheme);
-
     if (cTheme === 'dark') {
         toggleSwitch.checked = true;
         document.getElementById('blackButton').style.display='none';
@@ -98,6 +96,7 @@ if (cTheme) {
         document.getElementById('blackButton').style.display='block';
         document.getElementById('whiteButton').style.display='none';
     }
+    
 }
 </script>
 <script src="static/js/poster.js"></script>
