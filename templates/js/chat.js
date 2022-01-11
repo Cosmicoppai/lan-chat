@@ -157,26 +157,26 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 let string
                 if (messageObj.typ === 'alert') {
                     string = `<div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;">
-                                  <span class="mt-2 ms-1 px-3 py-2 border border-light bg-dark rounded-pill"
-                                 style="font-family: sans-serif; font-size: 15px;"><span
-                                style="font-family:sans-serif ; font-size: 15px;"><span class="fw-bolder">${messageObj.msg}</span>
+                                  <span class="mt-2 ms-1 px-3 py-2  bg-dark rounded-pill"
+                                 style="font-family: Comic Sans MS, Comic Sans, cursive; font-size: 15px;color: #F3E5AB; border: 2px solid #F3E5AB;"><span
+                                style="font-family:Comic Sans MS, Comic Sans, cursive ; font-size: 15px; color: #F3E5AB;"><span class="fw-bolder">${messageObj.msg}</span>
                                  </div>`
                     token = messageObj.token !== "" ? messageObj.token : token
                     document.getElementById("onlineUser").innerHTML = 'Online:' + messageObj.totalUser;
                 }
                 else if (messageObj.typ === 'txt-msg') {
                     if (messageObj.userName === username.value) {
-                        string = `<div class="container reciever mt-2 mb-2 border border-light bg-gradient   float-end  me-2" id="sender"  >
-                                      <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                                      <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px;">${messageObj.msg}</p>
+                        string = `<div class="container reciever mt-2 mb-2  bg-gradient   float-end  me-2" id="sender" style='border: 2px solid #F3E5AB;'  >
+                                      <h4 class="mt-2 ms-1 fw-bolder" style="font-family: Comic Sans MS, Comic Sans, cursive; color: #F3E5AB;">${messageObj.userName}</h4>
+                                      <p class="ms-1 text-break" style="font-family:Comic Sans MS, Comic Sans, cursive ; font-size: 15px; color: #F3E5AB;">${messageObj.msg}</p>
                                       </div>`;
     
                     }
                     else if ((messageObj.userName !== username.value)) {
-                        string = ` <div class="container  reciever mt-2 mb-2 border border-light bg-dark bg-gradient float-start  ms-2"
+                        string = ` <div class="container  reciever mt-2 mb-2  bg-dark bg-gradient float-start  ms-2"  style='border: 2px solid #F3E5AB;'
                         id="reciever" >
-                        <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
-                        <p class="ms-1 text-break" style="font-family:sans-serif ; font-size: 15px; ">${messageObj.msg}</p>
+                        <h4 class="mt-2 ms-1 fw-bolder" style="font-family: Comic Sans MS, Comic Sans, cursive; color: #F3E5AB;">${messageObj.userName}</h4>
+                        <p class="ms-1 text-break" style="font-family:Comic Sans MS, Comic Sans, cursive ; font-size: 15px; color: #F3E5AB;">${messageObj.msg}</p>
                         </div>`;
     
                     }
@@ -184,14 +184,14 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 else if (messageObj.typ === 'img-msg') {
                     imgSrc = messageObj.msg
                     if (messageObj.userName === username.value) {
-                        string = `  <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-end me-2 " id="sender">
-                                    <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                        string = `  <div class="container reciever mt-2 mb-2 bg-gradient float-end me-2 " id="sender" style='border: 2px solid #F3E5AB;'>
+                                    <h4 class="mt-2 ms-1 fw-bolder" style="font-family: Comic Sans MS, Comic Sans, cursive; color: #F3E5AB;">${messageObj.userName}</h4>
                                     <p class=" mx-auto ms-1" ><img width="660" height="325" src=${messageObj.msg} onclick="imgClick('${messageObj.msg}')" id="imgSender" alt="" class="imgSender mx-auto"></p>
                                     </div> `;
                     }
                     else if ((messageObj.userName !== username.value)) {
-                        string = `  <div class="container reciever mt-2 mb-2 border border-light bg-gradient float-start me-2 " id="sender">
-                                    <h4 class="mt-2 ms-1 fw-bolder" style="font-family: sans-serif;">${messageObj.userName}</h4>
+                        string = `  <div class="container reciever mt-2 mb-2 bg-gradient float-start me-2 " id="sender" style='border: 2px solid #F3E5AB;'>
+                                    <h4 class="mt-2 ms-1 fw-bolder" style="font-family: Comic Sans MS, Comic Sans, cursive; color: #F3E5AB;">${messageObj.userName}</h4>
                                     <p class=" ms-1 mx-auto" ><img  width="660" height="325" src=${messageObj.msg} onclick="imgClick('${messageObj.msg}')" id="imgSender" alt="" class="imgSender mx-auto"></p>
                                     </div> `;
                     }
