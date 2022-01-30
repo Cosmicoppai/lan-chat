@@ -86,12 +86,10 @@ func startChat(conn net.Conn) {
 				} else if (opCode == TextMessage) && isFinalBit != 0 { // for text msgs if finalBit is set, process the message
 					handleChat(conn, decodedPayload, isFinalBit, opCode)
 				} else if opCode == continuationFrame || isFinalBit == continuationFrame { // if opCode or finalBit is 0
-					if isFinalBit != 0 { // when finalBit is Set
-						streamBuffer = append(streamBuffer, decodedPayload...) // append the final decoded msg
+					streamBuffer = append(streamBuffer, decodedPayload...) // append the msg
+					if isFinalBit != 0 {                                   // when finalBit is Set
 						handleChat(conn, streamBuffer, isFinalBit, 1)
 						streamBuffer = nil // clear the stream Buffer
-					} else {
-						streamBuffer = append(streamBuffer, decodedPayload...)
 					}
 				}
 
@@ -103,7 +101,6 @@ func startChat(conn net.Conn) {
 			deleteUser(conn, UserRequest{}, false)
 		}
 	}
-	// t := http.ResponseWriter(conn)
 	_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
 	log.Println(conn.RemoteAddr().String(), ": upgrade not successful")
 }
