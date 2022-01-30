@@ -1,90 +1,164 @@
 package chat
 
 import (
-	"bufio"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
-	"io"
 	"log"
+	"math/rand"
 	"net"
-	"net/http"
+	"strings"
+	"time"
 )
 
-func Serve(conn net.Listener) error {
-	for {
-		req, e := conn.Accept()
-		if e != nil {
-			log.Println("Error while Accepting request", e)
-			continue
+type UserRequest struct {
+	Typ       string `json:"typ"`
+	UserName  string `json:"userName"`
+	Msg       string `json:"msg"`
+	Token     string `json:"token"`
+	TotalUser int    `json:"totalUser"`
+}
+
+type UserData struct {
+	userName string
+	token    string
+}
+
+var Data = map[net.Conn]UserData{}
+
+func handleChat(conn net.Conn, decodedPayload []byte, isFinalBit byte, opCode byte) {
+
+	var req UserRequest
+	decodeErr := json.Unmarshal(decodedPayload, &req)
+	if decodeErr != nil {
+		log.Println("Error while decoding data: ", decodeErr)
+	}
+	if strings.ToLower(req.Typ) == "add" {
+		addUser(conn, req)
+	} else if strings.ToLower(req.Typ) == "remove" {
+		deleteUser(conn, req, true)
+	} else if strings.ToLower(req.Typ) == "txt-msg" || strings.ToLower(req.Typ) == "img-msg" {
+		_username := Data[conn].userName
+		req.UserName = _username
+		finMsg := encodeMsg(isFinalBit, opCode, req)
+		sendMsg(finMsg)
+	}
+
+}
+
+func addUser(conn net.Conn, request UserRequest) {
+	var udata UserData
+	username := request.UserName // userName from request
+	if username != "" {
+		if _, exist := Data[conn]; exist {
+			_ = conn.Close()
 		}
-		go startChat(req)
+		if !checkUserName(username) {
+			udata.userName = username
+			udata.token = createToken() // set token
+
+			_addUser(conn, udata)
+			fmt.Printf("%s has joined the chat\n", username)
+		} else {
+			sendSingleMsg(conn, UserRequest{Typ: "error", Msg: "User-name already exists !"})
+		}
+	}
+
+}
+
+func _addUser(conn net.Conn, udata UserData) {
+
+	// send msg to all connections
+	msg := UserRequest{Typ: "alert",
+		Msg: fmt.Sprintf("%s has joined the chat", udata.userName), TotalUser: len(Data) + 1}
+	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+	sendMsg(encodedMsg)
+	Data[conn] = udata
+
+	// send msg to the requested-user with token
+	msgWithToken := UserRequest{Typ: "alert", Msg: fmt.Sprintf("%s has joined the chat", udata.userName),
+		Token:     udata.token,
+		TotalUser: len(Data)}
+	sendSingleMsg(conn, msgWithToken)
+
+}
+
+func checkUserName(userName string) bool {
+	for _, user := range Data {
+		if user.userName == userName {
+			return true
+		}
+	}
+	return false
+}
+
+func deleteUser(conn net.Conn, request UserRequest, tokenRequired bool) {
+	if !tokenRequired {
+		_deleteUser(conn)
+	} else if request.Token == Data[conn].token {
+		sendSingleMsg(conn, UserRequest{Typ: "success", Msg: "Successfully left the chat"})
+		_deleteUser(conn)
+	} else {
+		sendSingleMsg(conn, UserRequest{Typ: "error", Msg: "Invalid Token"})
 	}
 }
 
-func startChat(conn net.Conn) {
-	defer conn.Close()
+func _deleteUser(conn net.Conn) {
+	msg := UserRequest{Typ: "alert", Msg: fmt.Sprintf("%s has left the chat", Data[conn].userName), TotalUser: len(Data) - 1}
+	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+	delete(Data, conn)
+	sendMsg(encodedMsg)
+}
 
-	// buff := make([]byte, 4096)      // make buffer of 1024 bytes
-	if connectionUpgrade(conn) { // if connection upgrade is successful
-		read := bufio.NewReaderSize(conn, 5000012)
-
-		for {
-			byte1, err := read.ReadByte()
-			if err != nil {
-				if err == io.EOF || err.Error() == fmt.Sprintf("read tcp %s->%s: use of closed network connection", conn.LocalAddr().String(), conn.RemoteAddr().String()) { // if user has closed the connection
-					fmt.Println(conn.RemoteAddr().String(), "has closed the connection")
-					break
-				}
-				fmt.Println("Error!: ", err)
-				continue
-			}
-
-			isFinalBit := byte1 & finalBit
-			opCode := byte1 & 0xf
-			byte2, _ := read.ReadByte()        // Read the next byte
-			isMaskBitSet := byte2&maskBit != 0 // check if first bit of 2nd byte is set or not
-
-			if !isMaskBitSet {
-				log.Println("mask bit is not set")
-				conn.Close()
-			}
-
-			var payloadLen int
-			var nbs []byte // series of bytes to store if payLoadLen > 125
-			if int(byte2&0x7f) <= 125 {
-				payloadLen = int(byte2 & 0x7f)
-			} else if byte2&0x7f == 126 { // Read the next 16 bits
-				nb1, _ := read.ReadByte() // Read 3rd byte
-				nb2, _ := read.ReadByte() // Read 4th byte
-				nbs = append(nbs, []byte{nb1, nb2}...)
-				payloadLen = int(binary.BigEndian.Uint16(nbs))
-			} else {
-				for i := 0; i < 8; i++ { // Read the next 64 bits(8 byte)
-					_nb, _ := read.ReadByte()
-					nbs = append(nbs, _nb)
-				}
-				payloadLen = int(binary.BigEndian.Uint64(nbs))
-			}
-
-			if isMaskBitSet && (opCode == TextMessage) && isFinalBit != 0 {
-				remBytes, _ := read.Peek(maskKeyLen + payloadLen)
-				maskKey := remBytes[:maskKeyLen]
-				encodedPayLoad := remBytes[4:]
-				decodedPayload := make([]byte, payloadLen)
-				for i := 0; i < payloadLen; i++ {
-					decodedPayload[i] = encodedPayLoad[i] ^ maskKey[i%maskKeyLen]
-
-				}
-				handleChat(conn, decodedPayload, isFinalBit, opCode)
-				_, _ = read.Discard(read.Buffered()) // Reset the buffer
-
-			} else {
-				_, _ = read.Discard(read.Buffered())
-			}
+func sendMsg(msg []byte) {
+	for conn := range Data {
+		_, err := conn.Write(msg)
+		if err != nil {
+			log.Println("Error in sendMsg", err)
+			deleteUser(conn, UserRequest{}, false)
 		}
-		deleteUser(conn, UserRequest{}, false)
 	}
-	// t := http.ResponseWriter(conn)
-	_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
-	log.Fatalln("upgrade not successful")
+
+}
+
+func sendSingleMsg(conn net.Conn, msg UserRequest) {
+	encodedMsg := encodeMsg(finalBit, TextMessage, msg)
+	_, err := conn.Write(encodedMsg)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func encodeMsg(isFinalBit byte, opCode byte, msg UserRequest) []byte {
+	_msg := []byte{isFinalBit | opCode} // add the first byte consist of isFinalBit + OpCode
+	encodedPayload, _err := json.Marshal(msg)
+	if _err != nil {
+		log.Fatalln(_err)
+	}
+	var payloadLenBytes []byte
+	payloadLen := len(encodedPayload)
+	if payloadLen < 126 {
+		payloadLenBytes = []byte{byte(payloadLen)}
+	} else if len(encodedPayload) <= 65535 {
+		payloadLenBytes = []byte{byte(126)}
+		_payloadLenBytes := make([]byte, 2)
+		binary.BigEndian.PutUint16(_payloadLenBytes, uint16(payloadLen))
+		payloadLenBytes = append(payloadLenBytes, _payloadLenBytes...)
+	} else {
+		payloadLenBytes = []byte{byte(127)}
+		_payloadLenBytes := make([]byte, 8)
+		binary.BigEndian.PutUint64(_payloadLenBytes, uint64(payloadLen))
+		payloadLenBytes = append(payloadLenBytes, _payloadLenBytes...)
+	}
+	finMsg := append(_msg, payloadLenBytes...) // add the bytes consist of payloadLen
+	finMsg = append(finMsg, encodedPayload...) // add the message
+	return finMsg
+}
+
+func createToken() string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, 64)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)[:64]
+
 }

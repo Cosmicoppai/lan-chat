@@ -22,11 +22,9 @@ const (
 )
 
 const (
-	TextMessage   = 1
-	BinaryMessage = 2
-	CloseMessage  = 8
-	PingMessage   = 9
-	PongMessage   = 10
+	TextMessage = 1
+	PingMessage = 9
+	PongMessage = 10
 )
 
 func connectionUpgrade(conn net.Conn) (success bool) {

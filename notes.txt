@@ -1,9 +1,4 @@
-// connection upgrade
-// connection open
-// connection close
 // security
-// ping pong
-// handling of other than text data
 
 
 websocket begins with a Http GET Request from client to server, called the 'handshake'. This request carries with
@@ -32,6 +27,10 @@ client:- types :- alert, msg
 {"typ":'remove', 'userName':'cosmicoppai', 'token':'random-value'} -> {'typ': 'alert', 'msg':'cosmicoppai has left the chat', 'totalUser':0}
 {'typ':'message', 'msg':'yo'} -> {'typ':'message', 'msg':'yo', "userName":'cosmicoppai'}
 
+
+
+// type error (if username already exists or token is invalid or server is not reachable)
+// type success (user successfully deleted)
 
 ##
 Movie folder should consist of:

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -40,10 +41,9 @@ func sendEmail(email string, msg string) int {
 
 	form, err := http.PostForm(requestUrl, data)
 	if err != nil || form.StatusCode != 200 {
-		fmt.Println(form.StatusCode)
 		body, _ := ioutil.ReadAll(form.Body)
-		fmt.Println("Response", string(body))
-		fmt.Println("Error", err)
+		log.Println("Response", string(body))
+		log.Println("Error", err)
 		return -1
 	}
 	return 0

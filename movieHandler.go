@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func StaticPages(w http.ResponseWriter, r *http.Request) { // To server static pages
+func StaticPages(w http.ResponseWriter, r *http.Request) { // To serve static pages
 	fileLocation := strings.TrimPrefix(r.URL.Path, "/static/")
 	http.ServeFile(w, r, "./templates/"+fileLocation)
 }
