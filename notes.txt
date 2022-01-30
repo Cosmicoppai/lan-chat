@@ -38,3 +38,8 @@ Movie folder should consist of:
 *movieName.mp4
 *movieName.png
 *movieName.vtt  // subtitles if exist
+
+
+# TO DO
+
+/movies  -> will return the list of movies with their name, poster links and video links

@@ -28,7 +28,9 @@ func getIpAddress() string {
 		log.Panic(err)
 	}
 
-	defer conn.Close()
+	defer func(conn net.Conn) {
+		_ = conn.Close()
+	}(conn)
 	return conn.LocalAddr().(*net.UDPAddr).IP.To4().String()
 
 }

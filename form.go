@@ -21,7 +21,7 @@ func FormHandler(w http.ResponseWriter, r *http.Request) {
 			message := fmt.Sprintf("%s has been requested on %s. <br> msg:- %s", movieName, date, msg)
 			sendEmail(EMAIL, message)
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("Form Received! Thank you for your response"))
+			_, _ = w.Write([]byte("Form Received! Thank you for your response"))
 			return
 		}
 		http.Error(w, "Bad Request", http.StatusBadRequest)
