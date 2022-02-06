@@ -38,31 +38,52 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <form class="container " >
         <div class="mb-3 mt-3">
             <label for="formGroupExampleInput" class="form-label">Movie Suggestion</label>
             <input type="text"  class="form-control" id="moviefield"
-                placeholder="Enter the name of the movie">
+                placeholder="Enter the name of the movie"  />
+                <div id="movieError" style="color: red; display: none;">Please enter Movie Name</div>
         </div>
         <div class="mb-3">
             <label for="formGroupExampleInput2" class="form-label">Enter Date you wanna see the movie</label>
-            <input id="datefield" class="form-control" type='date' min='2021-01-01'></input>
+            <input id="datefield" class="form-control" type='date' min='2021-01-01' />
+            <div id="dateError" style="color: red; display: none;">Please enter Date</div>
         </div>
         <div class="mb-3">
             <label for="formGroupExampleInput2" class="form-label">Message</label>
             <input type="text" class="form-control" id="descriptionfield"
-                placeholder="Enter message if you have any ">
+                placeholder="Enter message if you have any "  />
         </div>
         <div class="container  d-flex align-items-center justify-content-center  px-5 ">
             <button type="button" class="btn py-3 px-5 " id="button"><span class="h5">Send <span style="color: red;">♥</span> </span></button>
         </div>
-    </div>
+    </form>
 </body>
 <script type="text/javascript">
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1; 
-    var yyyy = today.getFullYear();
+    (function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  let forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; 
+    let yyyy = today.getFullYear();
     if (dd < 10) {
         dd = '0' + dd
     }
