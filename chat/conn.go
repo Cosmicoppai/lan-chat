@@ -33,12 +33,8 @@ func startChat(conn net.Conn) {
 		for {
 			byte1, err := reader.ReadByte()
 			if err != nil {
-				if err == io.EOF || err.Error() == fmt.Sprintf("read tcp %s->%s: use of closed network connection", conn.LocalAddr().String(), conn.RemoteAddr().String()) { // if user has closed the connection
-					fmt.Println(conn.RemoteAddr().String(), "has closed the connection")
-					break
-				}
-				fmt.Println("Error!: ", err)
-				continue
+				fmt.Println(conn.RemoteAddr().String(), "has closed the connection")
+				break
 			}
 
 			isFinalBit := byte1 & finalBit
