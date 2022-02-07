@@ -43,13 +43,15 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 document.getElementById('homepageButton').style.display = 'none'
             }
         };
-        
+
 
         ws.onclose = function () {
-            document.getElementById('messages').innerHTML = ""
-            location.reload()
+            closeMsg()
         };
 
+        function closeMsg() {
+            if (!window.alert('Sorry some error occured!!!')) { window.location.reload(); }
+        }
         function addUser() {
             if (username.value !== '') {
                 const message = {
@@ -83,7 +85,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 let file = image.files[0]
                 let fsize = file.size;
                 let size = Math.round((fsize / 1024));
-                if (size < 5121) {
+                if (size < 4608) {
                     let reader = new FileReader();
                     reader.onload = function (e) {
                         const message = {

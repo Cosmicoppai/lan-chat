@@ -1,4 +1,5 @@
 body {
+    overflow-y: hidden;
     background-image: url('../images/chatBg.jpg');
     background-repeat: no-repeat;
     background-position: center;
@@ -7,14 +8,11 @@ body {
     color: #F3E5AB;
     height: 100vh;
     width: 100vw;
+
 }
 html {
     scroll-behavior: smooth;
   }
-::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
 
 @font-face {
     font-family: 'Dancing Script';
@@ -193,6 +191,9 @@ html {
     position: absolute;
     top: 15%;
     left: 25%;
+}
+.box{
+    overflow-y: hidden;
 }
 
 .cont {
@@ -409,7 +410,7 @@ textarea {
 
     .cont {
         width: 100%;
-        
+        margin-top: 8%;
     }
 
     .logo b {
@@ -447,7 +448,7 @@ textarea {
     .cont {
         width: 100%;
         margin-top: 10%;
-        height: 93%;
+        height: 91%;
     }
 
     .logo b {
@@ -482,7 +483,7 @@ textarea {
 
     .cont {
         width: 100%;
-        margin-top: 15%;
+        margin-top: 14%;
     }
 
     #inputState {
