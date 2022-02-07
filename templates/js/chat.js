@@ -43,13 +43,15 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 document.getElementById('homepageButton').style.display = 'none'
             }
         };
-        
+
 
         ws.onclose = function () {
-            document.getElementById('messages').innerHTML = ""
-            location.reload()
+            closeMsg()
         };
 
+        function closeMsg() {
+            if (!window.alert('Sorry some error occured!!!')) { window.location.reload(); }
+        }
         function addUser() {
             if (username.value !== '') {
                 const message = {

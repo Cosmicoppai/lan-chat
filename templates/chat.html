@@ -26,7 +26,8 @@
     <div class="chatRoom  text-center" id="name">
         <div class="mb-3 mt-3 w-50 h-100 inputName text-center">
             <label for="formGroupExampleInput" class="form-label h3">Enter the Name for your Chatroom</label>
-            <input type="text" class="form-control " id="namefield" style="background-color: transparent; color: #F3E5AB;">
+            <input type="text" class="form-control " id="namefield"
+                style="background-color: transparent; color: #F3E5AB;">
             <a type="button" class="btn  btn-lg mt-2 py-2 px-4" id="chatButton">Start
                 Chat</a>
         </div>
@@ -43,23 +44,24 @@
         </div>
         <!-- textarea -->
         <div class="input-group  mb-1  bg-dark " id="messageSender" style='border-top: 2px solid #F3E5AB;'>
-            <select id="inputState" class="form-select bg-dark   font-monospace" style="color:#F3E5AB ; border: 0; border-right: 2px solid #F3E5AB;">
-                <option  class="fs-4 " selected value="text">Plain Text</option>
-                <option  class="fs-4" value="markdown">Markdown</option>
+            <select id="inputState" class="form-select bg-dark   font-monospace"
+                style="color:#F3E5AB ; border: 0; border-right: 2px solid #F3E5AB;">
+                <option class="fs-4 " selected value="text">Plain Text</option>
+                <option class="fs-4" value="markdown">Markdown</option>
             </select>
             <textarea maxlength="3000" minlength="1" type="text" id="sendMessage"
-                class="form-control bg-dark bg-gradient py-3" style="color:#F3E5AB ;border: 0; border-right: 2px solid #F3E5AB;"
+                class="form-control bg-dark bg-gradient py-3"
+                style="color:#F3E5AB ;border: 0; border-right: 2px solid #F3E5AB;"
                 placeholder="Type your message..."></textarea>
             <label class=" fileUpload px-2 btn-default bg-dark " style="border: 0; border-right: 2px solid #F3E5AB;">
-                <img class="mt-2"
-                    src="static/images/file.png"
-                    id="imgTextarea" alt=""> <input type="file" id="file" class="mt-2" hidden=""
-                    style="cursor: pointer;" accept=".png, .jpg">
+                <img class="mt-2" src="static/images/file.png" id="imgTextarea" alt=""> <input type="file" id="file"
+                    class="mt-2" hidden="" style="cursor: pointer;" accept=".png, .jpg">
             </label>
             <button type="button" class="bg-dark mx-2  border-0 px-2" id="sendButton"><img width="30" height="25"
                     src="static/images/send.png" alt="Send" /></button>
         </div>
     </div>
+
 
 </body>
 <script src="static/js/jquery.js"></script>
