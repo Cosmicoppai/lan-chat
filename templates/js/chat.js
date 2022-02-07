@@ -85,7 +85,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 let file = image.files[0]
                 let fsize = file.size;
                 let size = Math.round((fsize / 1024));
-                if (size < 5121) {
+                if (size < 4608) {
                     let reader = new FileReader();
                     reader.onload = function (e) {
                         const message = {
