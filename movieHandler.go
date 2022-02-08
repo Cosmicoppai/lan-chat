@@ -52,13 +52,12 @@ func currentMovies(w http.ResponseWriter, r *http.Request) {
 	resp["movie_name"] = movie
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Some Error Occured"))
+		http.Error(w, "Some Error Occured", http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResp)
+	_, _ = w.Write(jsonResp)
 	return
 }
 

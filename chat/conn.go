@@ -96,7 +96,8 @@ func startChat(conn net.Conn) {
 		if _, exist := Data[conn]; exist {
 			deleteUser(conn, UserRequest{}, false)
 		}
+	} else {
+		_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
+		log.Println(conn.RemoteAddr().String(), ": upgrade not successful")
 	}
-	_, _ = conn.Write([]byte(string(rune(http.StatusBadRequest))))
-	log.Println(conn.RemoteAddr().String(), ": upgrade not successful")
 }
