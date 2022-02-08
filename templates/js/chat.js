@@ -29,6 +29,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
         let ws = new WebSocket(`ws://${document.domain}:9000`)
         let data
         ws.onopen = function () {
+            document.getElementById('alert').style.display = 'none'
             addUser()
         }
         ws.onmessage = function (msg) {
@@ -46,12 +47,11 @@ document.getElementById('chatButton').addEventListener('click', () => {
 
 
         ws.onclose = function () {
-            closeMsg()
+            document.getElementById('sendButton').disabled = 'true'
+            document.getElementById('alert').style.display = 'block'
         };
 
-        function closeMsg() {
-            if (!window.alert('Sorry some error occured!!!')) { window.location.reload(); }
-        }
+
         function addUser() {
             if (username.value !== '') {
                 const message = {
@@ -160,7 +160,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
             }
             let string
             if (messageObj.typ === 'alert') {
-                string = `<div class="mt-2 mb-2  float-start  ms-2 text-center" style="width: 95%;">
+                string = `<div class="mt-3 mb-2  float-start  ms-2 text-center" style="width: 95%;">
                                   <span class="mt-2 ms-1 px-3 py-2  bg-dark rounded-pill"
                                  style="font-family: Comic Sans MS, Comic Sans, cursive; font-size: 15px;color: #F3E5AB; border: 2px solid #F3E5AB;"><span
                                 style="font-family:Comic Sans MS, Comic Sans, cursive ; font-size: 15px; color: #F3E5AB;"><span class="fw-bolder">${messageObj.msg}</span>

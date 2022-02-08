@@ -1,501 +1,509 @@
 body {
-    overflow-y: hidden;
-    background-image: url('../images/chatBg.jpg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    font-family: Comic Sans MS, Comic Sans, cursive;
-    color: #F3E5AB;
-    height: 100vh;
-    width: 100vw;
-
+  background-image: url("../images/chatBg.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  font-family: Comic Sans MS, Comic Sans, cursive;
+  color: #f3e5ab;
+  height: 100%;
+  width: 100vw;
+  overflow: hidden;
 }
 html {
-    scroll-behavior: smooth;
-  }
-
+  height: 100%;
+  overflow: hidden;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #f3e5ab;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f3e5ab;
+}
 @font-face {
-    font-family: 'Dancing Script';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Dancing Script'), local('DancingScript'), url('../font/Potra.ttf') format('truetype');
+  font-family: "Dancing Script";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Dancing Script"), local("DancingScript"),
+    url("../font/Potra.ttf") format("truetype");
 }
 
 .logo b {
-    margin-top: 20px;
-    font-size: 3rem;
-    line-height: 80%;
-    transform: rotateX(0) rotateY(-25deg);
-    text-transform: uppercase;
-    width: 100px;
-    text-align: center;
-    color: #b9dfff;
-    color: #fff;
-    font-family: "Zefani";
-    font-family: 'Dancing Script';
-    text-shadow: 0 0 5px #F3E5AB, 0 0 10px #F3E5AB, 0 0 15px #F3E5AB, 0 0 20px #ff6f6f, 0 0 35px #ff6f6f, 0 0 40px #ff6f6f;
+  margin-top: 20px;
+  font-size: 3rem;
+  line-height: 80%;
+  transform: rotateX(0) rotateY(-25deg);
+  text-transform: uppercase;
+  width: 100px;
+  text-align: center;
+  color: #b9dfff;
+  color: #fff;
+  font-family: "Zefani";
+  font-family: "Dancing Script";
+  text-shadow: 0 0 5px #f3e5ab, 0 0 10px #f3e5ab, 0 0 15px #f3e5ab,
+    0 0 20px #ff6f6f, 0 0 35px #ff6f6f, 0 0 40px #ff6f6f;
 }
 
 .logo b.active span {
-    animation: blink linear infinite 1s;
-
+  animation: blink linear infinite 1s;
 }
 
 .logo b.active span:nth-of-type(2) {
-    animation: blink linear infinite 2s;
+  animation: blink linear infinite 2s;
 }
 
 @keyframes blink {
-    78% {
-        color: inherit;
-        text-shadow: inherit;
-    }
+  78% {
+    color: inherit;
+    text-shadow: inherit;
+  }
 
-    79% {
-        color: #333;
-    }
+  79% {
+    color: #333;
+  }
 
-    80% {
+  80% {
+    text-shadow: none;
+  }
 
-        text-shadow: none;
-    }
+  81% {
+    color: inherit;
+    text-shadow: inherit;
+  }
 
-    81% {
-        color: inherit;
-        text-shadow: inherit;
-    }
+  82% {
+    color: #333;
+    text-shadow: none;
+  }
 
-    82% {
-        color: #333;
-        text-shadow: none;
-    }
+  83% {
+    color: inherit;
+    text-shadow: inherit;
+  }
 
-    83% {
-        color: inherit;
-        text-shadow: inherit;
-    }
+  92% {
+    color: #333;
+    text-shadow: none;
+  }
 
-    92% {
-        color: #333;
-        text-shadow: none;
-    }
-
-    92.5% {
-        color: inherit;
-        text-shadow: inherit;
-    }
+  92.5% {
+    color: inherit;
+    text-shadow: inherit;
+  }
 }
 
 .dialog-ovelay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.50);
-    z-index: 999999
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999999;
 }
 .dialog-ovelay .dialog {
-    width: 400px;
-    margin: 100px auto 0;
-    background-color: rgb(41, 41, 41);
-    box-shadow: 0 0 20px rgba(0,0,0,.2);
-    border-radius: 3px;
-    overflow: hidden
+  width: 400px;
+  margin: 100px auto 0;
+  background-color: rgb(41, 41, 41);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
 }
 .dialog-ovelay .dialog header {
-    padding: 10px 8px;
-    border-bottom: 1px solid #e5e5e5
+  padding: 10px 8px;
+  border-bottom: 1px solid #e5e5e5;
 }
 .dialog-ovelay .dialog header h3 {
-    font-size: 14px;
-    margin: 0;
-    color: #c4c5c7;
-    display: inline-block
+  font-size: 14px;
+  margin: 0;
+  color: #c4c5c7;
+  display: inline-block;
 }
 .dialog-ovelay .dialog header .fa-close {
-    float: right;
-    color: #c4c5c7;
-    cursor: pointer;
-    transition: all .5s ease;
-    padding: 0 2px;
-    border-radius: 1px    
+  float: right;
+  color: #c4c5c7;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  padding: 0 2px;
+  border-radius: 1px;
 }
 .dialog-ovelay .dialog header .fa-close:hover {
-    color: #b9b9b9
+  color: #b9b9b9;
 }
 .dialog-ovelay .dialog header .fa-close:active {
-    box-shadow: 0 0 5px #673AB7;
-    color: #a2a2a2
+  box-shadow: 0 0 5px #673ab7;
+  color: #a2a2a2;
 }
 .dialog-ovelay .dialog .dialog-msg {
-    padding: 12px 10px
+  padding: 12px 10px;
 }
-.dialog-ovelay .dialog .dialog-msg p{
-    margin: 0;
-    font-size: 15px;
-    color: #c4c5c7
+.dialog-ovelay .dialog .dialog-msg p {
+  margin: 0;
+  font-size: 15px;
+  color: #c4c5c7;
 }
 .dialog-ovelay .dialog footer {
-    border-top: 1px solid #e5e5e5;
-    padding: 8px 10px
+  border-top: 1px solid #e5e5e5;
+  padding: 8px 10px;
 }
 .dialog-ovelay .dialog footer .controls {
-    direction: rtl
+  direction: rtl;
 }
 .dialog-ovelay .dialog footer .controls .button {
-    padding: 5px 15px;
-    border-radius: 3px
+  padding: 5px 15px;
+  border-radius: 3px;
 }
 .button {
-  cursor: pointer
+  cursor: pointer;
 }
 .button-default {
-    background-color: #2b2b2b;
-    border: 1px solid #f5f5f5;
-    color: #f5f5f5
+  background-color: #2b2b2b;
+  border: 1px solid #f5f5f5;
+  color: #f5f5f5;
 }
 .button-danger {
-    background-color: rgb(248, 248, 248);
-    border: 1px solid rgba(204, 204, 204, 0.5);
-    color: #2e2d2d;
+  background-color: rgb(248, 248, 248);
+  border: 1px solid rgba(204, 204, 204, 0.5);
+  color: #2e2d2d;
 }
 
-#leaveButton,#chatButton,#homepageButton{
-    color: #F3E5AB;
-    border: 2px solid #F3E5AB;
-    background-color: transparent;
+#leaveButton,
+#chatButton,
+#homepageButton {
+  color: #f3e5ab;
+  border: 2px solid #f3e5ab;
+  background-color: transparent;
 }
-#leaveButton:hover,#chatButton:hover,#homepageButton:hover{
-    color: white;
-    border: 2px solid white;
-    background-color: #F3E5AB;
+#leaveButton:hover,
+#chatButton:hover,
+#homepageButton:hover {
+  color: white;
+  border: 2px solid white;
+  background-color: #f3e5ab;
 }
 .chatRoom {
-    width: 40%;
-    height: 50%;
-    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, .15);
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 15%;
-    bottom: 0;
-    margin: auto;
-    backdrop-filter: blur(5px);
-    margin-top: 6%;
+  width: 40%;
+  height: 50%;
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.15);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 15%;
+  bottom: 0;
+  margin: auto;
+  backdrop-filter: blur(5px);
+  margin-top: 6%;
 }
 
 .inputName {
-    position: absolute;
-    top: 15%;
-    left: 25%;
+  position: absolute;
+  top: 15%;
+  left: 25%;
 }
-.box{
-    overflow-y: hidden;
+.box {
+  overflow-y: hidden;
 }
 
 .cont {
-    width: 80%;
-    height: 85%;
-    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, .15);
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    backdrop-filter: blur(5px);
-    margin-top: 6%;
+  width: 80%;
+  height: 85%;
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.15);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  backdrop-filter: blur(5px);
+  margin-top: 6%;
 }
 
 #sendMessage {
-    max-height: 180px;
-    color: #FFDEAD;
-    background: transparent;
+  max-height: 180px;
+  color: #ffdead;
+  background: transparent;
 }
 
-
 #messageSender {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
 }
 
 #inputState {
-    max-width: 200px;
+  max-width: 200px;
 }
 
 .messages {
-    max-height: 490px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
+  max-height: 490px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 #imgSender {
-    max-width: 100%;
-    max-height: 90%;
+  max-width: 100%;
+  max-height: 90%;
 }
 #imgSender2 {
-    max-width: 100%;
-    max-height: 90%;
+  max-width: 100%;
+  max-height: 90%;
 }
-#imgDiv{
-    max-width: 650px;
-    border-radius: 30px;
+#imgDiv {
+  max-width: 650px;
+  border-radius: 30px;
 }
 #sender {
-    max-width: 700px;
-    border-radius: 30px;
+  max-width: 700px;
+  border-radius: 30px;
 }
 
 #reciever {
-    max-width: 700px;
-    border-radius: 30px;
+  max-width: 700px;
+  border-radius: 30px;
 }
 
 select option {
-    background: transparent;
+  background: transparent;
 }
 
 .form-control::-webkit-input-placeholder {
-    color: #F3E5AB;
+  color: #f3e5ab;
 }
-
-
 
 textarea {
-    font-size: 14px;
-    height: 4em;
+  font-size: 14px;
+  height: 4em;
 }
 
-.fileUpload input[type=file] {
-    display: none;
-
+.fileUpload input[type="file"] {
+  display: none;
 }
 
 #imgTextarea {
-    width: 30px;
-    height: 50px;
+  width: 30px;
+  height: 50px;
 }
 
 #imgSender {
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 #imgSender2 {
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 #imgSender:hover {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 #imgSender2 {
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 #imgSender2:hover {
-    opacity: 0.7;
+  opacity: 0.7;
 }
-
 
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    padding-top: 100px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.9);
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.9);
 }
-
 
 .modal-content {
-    margin: auto;
-    display: block;
-    width: 100%;
-    height: 80%;
-    max-width: 700px;
+  margin: auto;
+  display: block;
+  width: 100%;
+  height: 80%;
+  max-width: 700px;
 }
-
 
 #caption {
-    margin: auto;
-    display: block;
-    width: 80%;
-    max-width: 700px;
-    text-align: center;
-    color: #F3E5AB;
-    padding: 10px 0;
-    height: 150px;
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #f3e5ab;
+  padding: 10px 0;
+  height: 150px;
 }
 
-
-.modal-content, #caption {
-    animation-name: zoom;
-    animation-duration: 0.6s;
+.modal-content,
+#caption {
+  animation-name: zoom;
+  animation-duration: 0.6s;
 }
 
 @keyframes zoom {
-    from {
-        transform: scale(0)
-    }
+  from {
+    transform: scale(0);
+  }
 
-    to {
-        transform: scale(1)
-    }
+  to {
+    transform: scale(1);
+  }
 }
 
 .close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #F3E5AB;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f3e5ab;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .close:hover,
 .close:focus {
-    color: #F3E5AB;
-    text-decoration: none;
-    cursor: pointer;
+  color: #f3e5ab;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* 100% Image Width on Smaller Screens */
 @media only screen and (max-width: 700px) {
-    .modal-content {
-        width: 100%;
-        
-    }
+  .modal-content {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 1500px) {
-    .messages {
-        max-height: 420px;
-        overflow-y: auto;
+  .messages {
+    max-height: 420px;
+    overflow-y: auto;
+  }
 
-    }
+  #sender,
+  #imgDiv {
+    max-width: 600px;
+  }
 
-
-    #sender,#imgDiv {
-        max-width: 600px;
-    }
-
-    #reciever {
-        max-width: 600px;
-    }
+  #reciever {
+    max-width: 600px;
+  }
 }
 
 @media screen and (max-width: 900px) {
-    .chatRoom {
-        width: 60%;
-        height: 40%;
+  .chatRoom {
+    width: 60%;
+    height: 40%;
+  }
 
-    }
+  .cont {
+    width: 100%;
+    margin-top: 8%;
+  }
 
-    .cont {
-        width: 100%;
-        margin-top: 8%;
-    }
+  .logo b {
+    font-size: 1.5rem;
+  }
 
-    .logo b {
-        font-size: 1.5rem;
-    }
+  #inputState {
+    max-width: 120px;
+  }
 
-    #inputState {
-        max-width: 120px;
-    }
+  #message {
+    margin-top: -500px;
+  }
 
-    #message {
-        margin-top: -500px;
-    }
+  #sender,
+  #imgDiv {
+    max-width: 500px;
+  }
 
-    #sender,#imgDiv  {
-        max-width: 500px;
-    }
-
-    #reciever {
-        max-width: 500px;
-    }
+  #reciever {
+    max-width: 500px;
+  }
 }
 
 @media screen and (max-width: 610px) {
-    .chatRoom {
-        width: 80%;
-        height: 40%;
-    }
+  .chatRoom {
+    width: 80%;
+    height: 40%;
+  }
 
-    #imgTextarea {
-        width: 25px;
-        height: 50px;
-    }
+  #imgTextarea {
+    width: 25px;
+    height: 50px;
+  }
 
-    .cont {
-        width: 100%;
-        margin-top: 10%;
-        height: 91%;
-    }
+  .cont {
+    width: 100%;
+    margin-top: 10%;
+    height: 91%;
+  }
 
-    .logo b {
-        font-size: 1.5rem;
-    }
+  .logo b {
+    font-size: 1.5rem;
+  }
 
-    #inputState {
-        max-width: 120px;
-    }
+  #inputState {
+    max-width: 120px;
+  }
 
-    #sender,#imgDiv  {
-        max-width: 380px;
-    }
+  #sender,
+  #imgDiv {
+    max-width: 380px;
+  }
 
-    #reciever {
-        max-width: 380px;
-    }
-
+  #reciever {
+    max-width: 380px;
+  }
 }
 
 @media screen and (max-width: 450px) {
-    #imgTextarea {
-        width: 23px;
-        height: 50px;
-    }
+  #imgTextarea {
+    width: 23px;
+    height: 50px;
+  }
 
-    .chatRoom {
-        width: 100%;
-        height: 70%;
-        top: 20%;
-    }
+  .chatRoom {
+    width: 100%;
+    height: 70%;
+    top: 20%;
+  }
 
-    .cont {
-        width: 100%;
-        margin-top: 14%;
-    }
+  .cont {
+    width: 100%;
+    margin-top: 14%;
+  }
 
-    #inputState {
-        max-width: 20px;
-    }
+  #inputState {
+    max-width: 20px;
+  }
 
-    #sender,#imgDiv  {
-        max-width: 260px;
-    }
+  #sender,
+  #imgDiv {
+    max-width: 260px;
+  }
 
-    #reciever {
-        max-width: 260px;
-    }
-
+  #reciever {
+    max-width: 260px;
+  }
 }

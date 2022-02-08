@@ -164,3 +164,8 @@ input:checked + .slider:before {
     margin: 0;
   }
 }
+@media only screen and (max-width: 600px) {
+  #navName {
+    margin-left: 10%;
+  }
+}
