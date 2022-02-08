@@ -40,9 +40,14 @@
             </div>
         </nav>
         <!-- chat section -->
+        <div class="alert alert-warning alert-dismissible fade show" id="alert" style="display: none;" role="alert">
+            <strong>Oops!</strong> Error connecting to server .
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
         <div class="messages" id="messages">
         </div>
         <!-- textarea -->
+        
         <div class="input-group  mb-1  bg-dark " id="messageSender" style='border-top: 2px solid #F3E5AB;'>
             <select id="inputState" class="form-select bg-dark   font-monospace"
                 style="color:#F3E5AB ; border: 0; border-right: 2px solid #F3E5AB;">
