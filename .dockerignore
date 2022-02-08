@@ -1,9 +1,0 @@
-Dockerfile
-docker-compose.yaml
-.gitignore
-.dockerignore
-notes.txt
-Readme.md
-test.go
-.idea
-.git
