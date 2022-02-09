@@ -15,17 +15,14 @@ usernameInput.addEventListener("keyup", function (event) {
     }
 });
 
-
-
-
-
 document.getElementById('chatButton').addEventListener('click', () => {
     if (username.value !== '') {
+        let counter = 1000;
         function connect() {
             let ws = new WebSocket(`ws://${document.domain}:9000`)
             let data
             ws.onopen = function () {
-                document.getElementById('sendButton').disabled = 'false'
+                document.getElementById("sendButton").disabled = false;
                 document.getElementById('alert').style.display = 'none'
                 addUser()
             }
@@ -42,13 +39,15 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 }
             };
             ws.onclose = function () {
-                document.getElementById('sendButton').disabled = 'true'
-                document.getElementById('alert').style.display = 'block'
-                setTimeout(function () {
+                let myFunction = function () {
                     connect();
-                }, 1000);
+                    document.getElementById("sendButton").disabled = true;
+                    document.getElementById('alert').style.display = 'block'
+                }
+                setTimeout(myFunction, counter);
+                counter = counter * 2
+                return counter
             };
-
 
             function addUser() {
                 if (username.value !== '') {
@@ -57,7 +56,6 @@ document.getElementById('chatButton').addEventListener('click', () => {
                         userName: username.value,
                     }
                     ws.send(JSON.stringify(message));
-
                 }
             }
 
@@ -120,7 +118,8 @@ document.getElementById('chatButton').addEventListener('click', () => {
                     ws.send(JSON.stringify(message));
                     username.value = '';
                     document.getElementById('messages').innerHTML = "";
-                    setTimeout(location.reload(), 1000)
+                    document.getElementById('chat').style.display = 'none'
+                    document.getElementById('name').style.display = 'block'
                 }
             })
             document.getElementById('sendButton').addEventListener('click', () => {
@@ -137,9 +136,11 @@ document.getElementById('chatButton').addEventListener('click', () => {
                         typ: "txt-msg",
                         msg: result
                     }
-                    ws.send(JSON.stringify(message));
-                    document.getElementById("sendMessage").value = "";
-                    document.querySelector('textarea').style.cssText = 'height:65px'
+                    if (ws.readyState === 1) {
+                        ws.send(JSON.stringify(message));
+                        document.getElementById("sendMessage").value = "";
+                        document.querySelector('textarea').style.cssText = 'height:65px'
+                    }
                 }
             })
             function alertMsg(messageObj) {
