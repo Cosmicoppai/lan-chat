@@ -22,7 +22,11 @@ document.getElementById('chatButton').addEventListener('click', () => {
             let ws = new WebSocket(`ws://${document.domain}:9000`)
             let data
             ws.onopen = function () {
+
                 document.getElementById("sendButton").disabled = false;
+              
+                document.getElementById('sendButton').disabled = false
+
                 document.getElementById('alert').style.display = 'none'
                 addUser()
             }
@@ -39,7 +43,13 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 }
             };
             ws.onclose = function () {
+
                 let myFunction = function () {
+
+                document.getElementById('sendButton').disabled = true
+                document.getElementById('alert').style.display = 'block'
+                setTimeout(function () {
+
                     connect();
                     document.getElementById("sendButton").disabled = true;
                     document.getElementById('alert').style.display = 'block'
