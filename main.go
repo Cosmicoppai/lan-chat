@@ -1,22 +1,24 @@
 package main
 
 import (
+	"lan-chat/admin"
 	"lan-chat/chat"
+	"lan-chat/movieHandler"
 	"log"
 	"net"
 	"net/http"
+	"path/filepath"
 )
 
 func Server(ip string) {
 	ip = ip + ":80"
 	server := http.NewServeMux()
-	server.HandleFunc("/", Home)
-	server.HandleFunc("/static/", StaticPages)         // endpoint to get static pages
-	server.HandleFunc("/send-suggestion", FormHandler) // to accept form-data
-	server.HandleFunc("/movie_name", currentMovies)    // get the json response of current streaming movies
-	server.HandleFunc("/get_movie/", GetMovie)         // endpoint to get movie
-	server.HandleFunc("/get_sub/", GetSub)             // endpoint to get sub
-	server.HandleFunc("/get_poster/", GetPoster)       //endpoint to  get current premiering movie poster
+	server.HandleFunc("/", movieHandler.Home)
+	server.HandleFunc("/static/", movieHandler.StaticPages)    // endpoint to get static pages
+	server.HandleFunc("/send-suggestion", FormHandler)         // to accept form-data
+	server.HandleFunc("/list-movies", movieHandler.ListVideos) // get the json response of current streaming movies
+	server.HandleFunc("/file/", movieHandler.GetFile)          // endpoint to get movie
+	server.HandleFunc("/bwahahaha", admin.UploadHandler)
 	log.Printf("Http server is listening on %s", ip)
 	log.Fatalln(http.ListenAndServe(ip, server))
 }
@@ -36,6 +38,10 @@ func getIpAddress() string {
 }
 
 func main() {
+	envFilePath, _ := filepath.Abs(".env")
+	admin.LoadEnv(envFilePath)
+	admin.InitializeDB()
+	defer admin.Db.Close()
 
 	_ipAddress := getIpAddress()
 	if _ipAddress != "" {

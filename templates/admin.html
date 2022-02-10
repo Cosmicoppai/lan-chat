@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="mb-3">
+    <form enctype="multipart/form-data" method="post" action="" name="my-form" id="uploadForm">
+    <label for="movie-name" class="form-label">Movie Name</label>
+    <input type="text" class="form-control" id="movie-name" placeholder="kimi no nawa" name="movie-name" accept="text" required>
+
+    <label for="movie" class="form-label">Movie</label>
+    <input class="form-control" type="file" id="movie" accept="video/mp4" name="movie" required>
+
+    <label for="movie-image" class="form-label">Movie-image</label>
+    <input class="form-control" type="file" id="movie-image" accept="image/*" name="movie-image" required>
+
+    <label for="movie-sub" class="form-label">Movie-sub</label>
+    <input class="form-control" type="file" id="movie-sub" accept=".vtt" name="movie-sub">
+
+        <input class="form-check-input" type="checkbox" id="type-movie" name="type" value="movie">
+        <label class="form-check-label" for="type-movie">Movie</label>
+        <input class="form-check-input" type="checkbox" id="type-series" name="type" value="series">
+        <label class="form-check-label" for="type-series">Series</label>
+        <input class="form-check-input" type="checkbox" id="type-ova" name="type" value="ova" >
+        <label class="form-check-label" for="type-ova">OVA</label>
+
+        <label class="form-control" for="epNo">Episode Number</label>
+        <input type="text" class="form-control" id="epNo" placeholder="Enter episode number in case of series, value will set to 1 in-case of empty form" name="ep-no"><br><br>
+
+        <div class="upload button position-absolute start-50">
+    <button type="submit" value="submit" class="btn btn-success position-relative">Upload</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let form = document.getElementById("uploadForm")
+    form.addEventListener("submit", (e) => {
+        e.preventDefault()
+        formSubmit()
+
+    function formSubmit() {
+        const form = document.querySelector('#uploadForm');
+        const checkboxes = form.querySelectorAll('input[type=checkbox]');
+        const checkboxLength = checkboxes.length;
+
+        function init() {
+            if (isChecked()) {form.submit() }
+            else {alert("select at-least one checkbox")}
+        }
+
+        function isChecked() {
+            let total = 0
+            for (let i = 0; i < checkboxLength; i++) {
+                if (checkboxes[i].checked) total ++;
+            }
+            return total === 1;
+            
+        }
+
+        init();
+    }})
+</script>
+
+</body>
+</html>
