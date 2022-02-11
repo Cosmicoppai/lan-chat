@@ -4,6 +4,7 @@ import (
 	"lan-chat/admin"
 	"lan-chat/chat"
 	"lan-chat/movieHandler"
+	"lan-chat/suggestions"
 	"log"
 	"net"
 	"net/http"
@@ -14,10 +15,10 @@ func Server(ip string) {
 	ip = ip + ":80"
 	server := http.NewServeMux()
 	server.HandleFunc("/", movieHandler.Home)
-	server.HandleFunc("/static/", movieHandler.StaticPages)    // endpoint to get static pages
-	server.HandleFunc("/send-suggestion", FormHandler)         // to accept form-data
-	server.HandleFunc("/list-movies", movieHandler.ListVideos) // get the json response of current streaming movies
-	server.HandleFunc("/file/", movieHandler.GetFile)          // endpoint to get movie
+	server.HandleFunc("/static/", movieHandler.StaticPages)        // endpoint to get static pages
+	server.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
+	server.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
+	server.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
 	server.HandleFunc("/bwahahaha", admin.UploadHandler)
 	log.Printf("Http server is listening on %s", ip)
 	log.Fatalln(http.ListenAndServe(ip, server))

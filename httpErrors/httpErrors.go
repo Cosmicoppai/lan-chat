@@ -23,3 +23,7 @@ func UnProcessableEntry(w http.ResponseWriter) {
 func StatusConflict(w http.ResponseWriter) {
 	http.Error(w, "Resource Already Exist", http.StatusConflict)
 }
+
+func BadRequest(w http.ResponseWriter) {
+	http.Error(w, "Bad Request", http.StatusBadRequest)
+}
