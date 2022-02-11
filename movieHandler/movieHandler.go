@@ -20,11 +20,13 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("content-type", "text/html")
 	fn := r.URL.Path
-	if fn == "/" {
+
+	switch fn {
+	case "/":
 		http.ServeFile(w, r, "./templates/index.html")
-	} else if fn == "/favicon.ico" {
+	case "/favicon.ico":
 		http.Redirect(w, r, "/static"+fn, 301)
-	} else {
+	default:
 		file := fn + ".html"
 		http.ServeFile(w, r, "./templates/"+file)
 	}
