@@ -42,8 +42,9 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	switch params[0] {
-	case "videos":
+	case "video":
 		{
+			moviePath = "videos" + strings.TrimPrefix(moviePath, "video")
 			if isExist(moviePath) {
 				w.Header().Set("content-type", "video/mp4")
 				w.Header().Set("accept-ranges", "bytes")

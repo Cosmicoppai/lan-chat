@@ -5,6 +5,7 @@ import (
 	"io"
 	"lan-chat/httpErrors"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"strconv"
@@ -82,60 +83,43 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 		httpErrors.UnProcessableEntry(w)
 		return
 	}
-	_, err = os.Stat(fmt.Sprintf("videos/%s/%s", videoTyp, videoName))
+	_, err = os.Stat(fmt.Sprintf("videos/%s/%s/%s", videoTyp, videoName, fileName))
 
 	var path string // path at which files are going to be saved
 	if os.IsNotExist(err) {
-		path = fmt.Sprintf("videos/%s/%s", videoTyp, videoName)
+		switch videoTyp {
+		case "series":
+			path = fmt.Sprintf("videos/%s/%s/%s", videoTyp, videoName, fileName) // create path in format videos/series/kochikame/ep1
+		default:
+			path = fmt.Sprintf("videos/%s/%s", videoTyp, videoName)
+		}
 		err = os.MkdirAll(path, 0755) // create directory in format videoTyp/videoName
 		if err != nil {
 			httpErrors.InternalServerError(w)
 			return
 		}
-		defer videoFile.Close()
-		defer imageFile.Close()
 
 		var (
 			videoDestPath = fmt.Sprintf("%s/%s.mp4", path, fileName)
 			imageDestPath = fmt.Sprintf("%s/%s.png", path, fileName)
 			subDestPath   = ""
 		)
-		videoDst, videoDstErr := os.Create(videoDestPath)
-		imageDest, imageDestErr := os.Create(imageDestPath)
-
-		if (videoDstErr != nil) || (imageDestErr != nil) {
-			httpErrors.InternalServerError(w)
-			return
-		}
-		if _, err = io.Copy(videoDst, videoFile); err != nil {
-			log.Println("Err while copying video", err)
-			httpErrors.InternalServerError(w)
-			return
-		}
-		if _, err = io.Copy(imageDest, imageFile); err != nil {
-			log.Println("Err while copying image", err)
+		if (saveFile(videoFile, videoDestPath) != nil) || (saveFile(imageFile, imageDestPath) != nil) {
 			httpErrors.InternalServerError(w)
 			return
 		}
 		if subErr == nil {
-			defer subFile.Close()
 			subDestPath = fmt.Sprintf("%s/%s.vtt", path, fileName)
-
-			subDest, subDestErr := os.Create(subDestPath)
-			if subDestErr != nil {
-				httpErrors.InternalServerError(w)
-				return
-			}
-			if _, err = io.Copy(subDest, subFile); err != nil {
-				log.Println("Err while copying subtitles", err)
+			if saveFile(subFile, subDestPath) != nil {
 				httpErrors.InternalServerError(w)
 				return
 			}
 		}
 
-		video := Video{Name: videoName, Typ: videoTyp, EpNo: epNo, VideoLink: videoDestPath,
-			ImageLink: strings.Replace(imageDestPath, "videos", "poster", 1),
-			SubLink:   strings.Replace(subDestPath, "videos", "sub", 1)}
+		video := Video{Name: videoName, Typ: videoTyp, EpNo: epNo,
+			VideoLink: strings.Replace(videoDestPath, "videos", "file/video", 1),
+			ImageLink: strings.Replace(imageDestPath, "videos", "file/poster", 1),
+			SubLink:   strings.Replace(subDestPath, "videos", "file/sub", 1)}
 
 		err = video.save()
 		if err != nil {
@@ -146,6 +130,20 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(201)
 	} else {
 		httpErrors.StatusConflict(w)
-		// admin(w, r)
 	}
+}
+
+func saveFile(file multipart.File, path string) error {
+	defer file.Close()
+	Dst, DstErr := os.Create(path)
+
+	if DstErr != nil {
+		return DstErr
+	}
+	if _, err := io.Copy(Dst, file); err != nil {
+		log.Println("Err while copying video", err)
+		return err
+	}
+	return nil
+
 }
