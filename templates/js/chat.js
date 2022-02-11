@@ -6,7 +6,6 @@ const image = document.querySelector('#file')
 let token
 
 let usernameInput = document.getElementById("namefield");
-let messageInput = document.getElementById("sendMessage");
 
 usernameInput.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
@@ -22,11 +21,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
             let ws = new WebSocket(`ws://${document.domain}:9000`)
             let data
             ws.onopen = function () {
-
                 document.getElementById("sendButton").disabled = false;
-              
-                document.getElementById('sendButton').disabled = false
-
                 document.getElementById('alert').style.display = 'none'
                 addUser()
             }
@@ -43,13 +38,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
                 }
             };
             ws.onclose = function () {
-
                 let myFunction = function () {
-
-                document.getElementById('sendButton').disabled = true
-                document.getElementById('alert').style.display = 'block'
-                setTimeout(function () {
-
                     connect();
                     document.getElementById("sendButton").disabled = true;
                     document.getElementById('alert').style.display = 'block'
@@ -70,7 +59,7 @@ document.getElementById('chatButton').addEventListener('click', () => {
             }
 
             function Confirm(title, msg, $true, $false) { /*change*/
-                var $content = "<div class='dialog-ovelay '>" +
+                let $content = "<div class='dialog-ovelay '>" +
                     "<div class='dialog bg-gradient'><header>" +
                     " <h3> " + title + " </h3> " +
                     "<i class='fa fa-close'></i>" +
@@ -221,4 +210,3 @@ document.getElementById('chatButton').addEventListener('click', () => {
         connect();
     }
 })
-
