@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"lan-chat/httpErrors"
@@ -8,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -33,14 +35,12 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 		httpErrors.UnProcessableEntry(w)
 		return
 	}
-	var videoName = r.FormValue("movie-name")
-	videoTyp := r.FormValue("type")
-
-	if videoName == "" {
-		log.Println("Empty Movie Name")
+	videoName, err := cleanUserInput(r.FormValue("movie-name"))
+	if err != nil {
 		httpErrors.UnProcessableEntry(w)
 		return
 	}
+	videoTyp := r.FormValue("type")
 
 	var (
 		epNo  int
@@ -85,23 +85,23 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = os.Stat(fmt.Sprintf("videos/%s/%s/%s", videoTyp, videoName, fileName))
 
-	var path string // path at which files are going to be saved
+	var _path string // path at which files are going to be saved
 	if os.IsNotExist(err) {
 		switch videoTyp {
 		case "series":
-			path = fmt.Sprintf("videos/%s/%s/%s", videoTyp, videoName, fileName) // create path in format videos/series/kochikame/ep1
+			_path = fmt.Sprintf("videos/%s/%s/%s", videoTyp, videoName, fileName) // create path in format videos/series/kochikame/ep1
 		default:
-			path = fmt.Sprintf("videos/%s/%s", videoTyp, videoName)
+			_path = fmt.Sprintf("videos/%s/%s", videoTyp, videoName)
 		}
-		err = os.MkdirAll(path, 0755) // create directory in format videoTyp/videoName
+		err = os.MkdirAll(_path, 0755) // create directory in format videoTyp/videoName
 		if err != nil {
 			httpErrors.InternalServerError(w)
 			return
 		}
 
 		var (
-			videoDestPath = fmt.Sprintf("%s/%s.mp4", path, fileName)
-			imageDestPath = fmt.Sprintf("%s/%s.png", path, fileName)
+			videoDestPath = fmt.Sprintf("%s/%s.mp4", _path, fileName)
+			imageDestPath = fmt.Sprintf("%s/%s.png", _path, fileName)
 			subDestPath   = ""
 		)
 		if (saveFile(videoFile, videoDestPath) != nil) || (saveFile(imageFile, imageDestPath) != nil) {
@@ -109,7 +109,7 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if subErr == nil {
-			subDestPath = fmt.Sprintf("%s/%s.vtt", path, fileName)
+			subDestPath = fmt.Sprintf("%s/%s.vtt", _path, fileName)
 			if saveFile(subFile, subDestPath) != nil {
 				httpErrors.InternalServerError(w)
 				return
@@ -133,8 +133,7 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func saveFile(file multipart.File, path string) error {
-	defer file.Close()
+func saveFile(file multipart.File, path string) (err error) {
 	Dst, DstErr := os.Create(path)
 
 	if DstErr != nil {
@@ -144,6 +143,19 @@ func saveFile(file multipart.File, path string) error {
 		log.Println("Err while copying video", err)
 		return err
 	}
+	if err = file.Close(); err != nil { // check for any errors while closing the file
+		return err
+	}
 	return nil
+
+}
+
+func cleanUserInput(userInput string) (cleanInput string, err error) {
+	cleanInput = strings.TrimPrefix(path.Clean("/"+userInput), "/")
+
+	if cleanInput != "" {
+		return cleanInput, nil
+	}
+	return cleanInput, errors.New("invalid Movie Name")
 
 }

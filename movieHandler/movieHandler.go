@@ -37,7 +37,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		httpErrors.MethodNotAllowed(w)
 		return
 	}
-	moviePath := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/file/"), "/")
+	moviePath := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/file/"), "/") // no need to clean url, http package cleans it by default
 	params := strings.Split(moviePath, "/")
 	if len(params) < 3 {
 		httpErrors.NotFound(w)
