@@ -35,16 +35,12 @@ if (currentTheme) {
     }
 }
 
-Object.defineProperty(String.prototype, 'capitalize', {
-    value: function () {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    },
-    enumerable: false
-});
+// Object.defineProperty(String.prototype, 'capitalize', {
+//     value: function () {
+//         return this.charAt(0).toUpperCase() + this.slice(1);
+//     },
+//     enumerable: false
+// });
 
 
-getMovieName().then(x => {
-    let remove_after = x.indexOf('.');
-    let result = x.substring(0, remove_after);
-    document.getElementById('movieName').innerHTML += result.capitalize()
-})
+

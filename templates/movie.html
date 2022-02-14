@@ -14,14 +14,20 @@
   </style>
 </head>
 <body>
-  <video id="myPlayerID" data-player="default" data-embed="default" data-application-id class="video-js" controls  muted="true" autoplay playsinline loop>
-    <source  type="video/mp4" id="source"  />
-    <track label="English" kind="subtitles" srclang="en" id="subtitle" default>
-  </video>
+  <div id="normal">
+    <video id="myPlayerID" data-player="default" data-embed="default" data-application-id class="video-js" controls  muted="true" autoplay playsinline loop>
+      <source  type="video/mp4" id="source"  />
+      <track label="English" kind="subtitles" srclang="en" id="subtitle" default>
+    </video>
+  </div>
+  <div id="main" >
+    <div class="fof">
+          <h1>Not Found!!</h1>
+    </div>
+</div>
   <a href="/" type="button" class=" btn btn-outline-light btn-lg mb-5 " style="position:absolute;
   bottom:0; left:40%; right: 40%;">Go Back to HomePage</a>
 </body>
-<script src="static/js/script.js"></script>
 <script src="static/js/sub.js"></script>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
