@@ -1,11 +1,11 @@
-let fetchMovieName = async () => {
-    const response = await fetch("/movie_name")
-    const data = await response.json()
-    return data.movie_name
+let fetchDetails = async () => {
+  const response = await fetch("/list-movies")
+  const data = await response.json()
+  return data
 }
 
 
-async function getMovieName() {
-    return await fetchMovieName()
+async function getDetails() {
+  return await fetchDetails()
 
 }

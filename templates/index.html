@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/bootstrap-5.1.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/index.css">
+    <script src="static/js/jquery.js"></script>
     <script src="static/js/get_movie_name.js"></script>
     <title>Offline</title>
-
 </head>
 
 <body>
@@ -23,7 +22,7 @@
                     <a class="nav-link  fs-5" aria-current="page" id="contactName" href="/chat">ChatRoom</a>
                 </li>
             </ul>
-            <div >
+            <div>
                 <form class="d-flex mb-1 mb-md-0">
                     <div class="theme-switch-wrapper mt-2 d-flex">
                         <p class="me-2 mt-2 h6" id="light">Light</p>
@@ -46,27 +45,26 @@
                 This is your place to find entertainment with movie anytime and to chat with other fellow hostelers even
                 when internet is not available. So enjoy!!!!!!
             </div>
-            <button type="button" class=" btn-close btn-close-white" id="blackButton"  data-bs-dismiss="alert"></button>
+            <button type="button" class=" btn-close btn-close-white" id="blackButton" data-bs-dismiss="alert"></button>
         </div>
     </div>
-    <div class="container d-flex align-items-center justify-content-center ">
-        <img id="poster" class="img-fluid rounded " alt="Error!" width="1000" height="500">
+    <div id="slider">
+        <ul id="slideWrap">
+        </ul>
+        <a id="prev" href='#'>&#8810;</a>
+        <a id="next" href='#'>&#8811;</a>
     </div>
-    <div class="mt-3" mb-5>
-        <marquee width="100%" direction="left" height="100px">
-            <span class="display-1">
-                Premiering:<span id="movieName" class="fw-bolder display-1"></span>
-            </span>
-        </marquee>
+    <div id="resultplace" class="mt-5">
+        <ul class="searchresult" id="searchresult">
+            
+        </ul>
     </div>
-    <div class="container d-flex align-items-center justify-content-center mt-3 px-5 ">
-        <a href="/movie" type="button" class="btn  btn-lg py-3 px-5">Watch Movie</a>
-    </div>
-    <span class=" d-flex align-items-center justify-content-center mt-1  ms-2"> You can request for your favorite movie.
-        Send
-        us your movie suggestion from Suggestion section below</span>
     <footer class="my-3 pt-5 text-muted text-center text-small">
-        <p class="mb-1">©Laxmi Chat Room</p>
+        <span class=" d-flex align-items-center justify-content-center mt-1  ms-2"> You can request for your favorite
+            movie.
+            Send
+            us your movie suggestion from Suggestion section below</span>
+        <p class="mb-1 mt-3">©Laxmi Chat Room</p>
         <ul class="list-inline">
             <li class="list-inline-item"><a id="contactName" class="fs-4" href="/suggestion">Suggestion</a></li>
         </ul>
@@ -74,12 +72,12 @@
 </body>
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="static/js/index.js"></script>
+<script src="static/js/poster.js"></script>
 <script type="text/javascript">
     function redirect() {
         window.location.replace("/chat")
     }
 </script>
-<script src="static/js/poster.js"></script>
 
 
 </html>
