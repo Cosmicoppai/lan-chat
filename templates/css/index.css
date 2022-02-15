@@ -36,6 +36,12 @@ body {
   height: 100vh;
   text-align: center;
 }
+#main2 {
+  display: none;
+  width: 100%;
+  height: 35vh;
+  text-align: center;
+}
 
 .fof {
   display: table-cell;
