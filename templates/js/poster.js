@@ -15,12 +15,12 @@ getDetails().then(movie => {
                 if (movie[i]) {
                     let link
                     let imglink = movie[i].imageLink.split(' ').join('%20')
-                    console.log(movie[i])
+                    let name = movie[i].name.split(' ').join('+')
                     if(movie[i].typ ==='movie'){
-                        link = `/movie?movieName=${movie[i].name}`
+                        link = `/movie?movieName=${name}`
                     }
                     else if(movie[i].typ ==='series'){
-                        link = `/movie?seriesName=${movie[i].name}&ep${movie[i].epNo}`
+                        link = `/movie?seriesName=${name}&ep${movie[i].epNo}`
                     }
                     let header = document.getElementById('slideWrap');
                     let string = `<li><a href=${link} class="column caption  col-xs-6" id="caption"><span class="text">
@@ -34,11 +34,12 @@ getDetails().then(movie => {
                 if (movie[i]) {
                     let link
                     let imglink = movie[i].imageLink.split(' ').join('%20')
+                    let name = movie[i].name.split(' ').join('+')
                     if(movie[i].typ ==='movie'){
-                        link = `/movie?movieName=${movie[i].name}`
+                        link = `/movie?movieName=${name}`
                     }
                     else if(movie[i].typ ==='series'){
-                        link = `/movie?seriesName=${movie[i].name}&ep=${movie[i].epNo}`
+                        link = `/movie?seriesName=${name}&ep=${movie[i].epNo}`
                     }
                     let header = document.getElementById('searchresult');
                     let string = `<li>

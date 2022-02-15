@@ -196,8 +196,8 @@ body {
 
 #slider #prev,
 #slider #next {
-  width: 50px;
-  line-height: 50px;
+  width:100px;
+  line-height: 100px;
   border-radius: 50%;
   font-size: 2rem;
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.6);

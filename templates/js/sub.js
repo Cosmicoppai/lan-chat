@@ -10,7 +10,8 @@ getDetails().then(subFileName => {
             const obj = subFileName.find(o => o.name === movieName)
             if (obj) {
                 let movieSrc = document.getElementById('source')
-                movieSrc.setAttribute('src', obj.videoLink);
+                let movielink = obj.videoLink.split(' ').join('%20')
+                movieSrc.setAttribute('src', movielink);
                 let subtitlesSrc = document.getElementById('subtitle')
                 subtitlesSrc.setAttribute('src', obj.subLink);
             }
@@ -23,7 +24,8 @@ getDetails().then(subFileName => {
             const obj = subFileName.find(o =>  o.name === seriesName && o.epNo === parseInt(ep) )
             if (obj) {
                 let seriesSrc = document.getElementById('source')
-                seriesSrc.setAttribute('src', obj.videoLink);
+                let serieslink = obj.videoLink.split(' ').join('%20')
+                seriesSrc.setAttribute('src', serieslink);
                 let subtitlesSrc = document.getElementById('subtitle')
                 subtitlesSrc.setAttribute('src', obj.subLink);
             }
