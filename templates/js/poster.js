@@ -101,16 +101,9 @@ getDetails().then(movie => {
                             count = 1;
                         }
                     };
-                    next.addEventListener("click", function () {
-                        nextSlide();
-                    });
-                    prev.addEventListener("click", function () {
-                        prevSlide();
-                    });
-        
                     let theInterval
                     function startSlide() {
-                        theInterval = setInterval(nextSlide(), 7000);
+                        theInterval = setInterval(nextSlide(), 5000);
                     }
                     function stopSlide() {
                         clearInterval(theInterval);
@@ -124,7 +117,7 @@ getDetails().then(movie => {
                         })
                     });
                 };
-                await responsiveSlider()
+                await responsiveSlider();
                 break;
             }
     
