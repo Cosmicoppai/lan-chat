@@ -9,6 +9,7 @@ getDetails().then(subFileName => {
         if (movieName) {
             const obj = subFileName.find(o => o.name === movieName)
             if (obj) {
+                document.getElementById('heading').innerHTML += `${obj.name}(ep${obj.epNo})`
                 let movieSrc = document.getElementById('source')
                 let movielink = obj.videoLink.split(' ').join('%20')
                 movieSrc.setAttribute('src', movielink);
