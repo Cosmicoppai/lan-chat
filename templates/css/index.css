@@ -225,8 +225,8 @@ body {
 #slider {
   position: relative;
   pointer-events: auto;
-  width: 85vw;
-  height: 500px;
+  width: 90vw;
+  height: 400px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 1px 3px var(--font-color);
@@ -249,8 +249,8 @@ body {
   float: left;
 }
 #slider ul li img {
-  width: 85vw;
-  height: 500px;
+  width: 90vw;
+  height: 400px;
 }
 
 #slider #prev,

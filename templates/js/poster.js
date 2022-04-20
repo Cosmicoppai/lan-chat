@@ -22,7 +22,8 @@ getDetails().then(movie => {
                     link = `/movie?seriesName=${name}&ep${movie[i].epNo}`
                 }
                 document.getElementById(`img${i}`).setAttribute('src', imglink);
-                document.getElementById(`name${i}`).innerHTML += `${movie[i].name}(Ep${movie[i].epNo})`
+
+                document.getElementById(`name${i}`).innerHTML += movie[i].epNo?`${movie[i].name}(Ep${movie[i].epNo})`:`${movie[i].name}`
             }
         }
         for (i = 3; i <= movie.length; i++) {
@@ -46,7 +47,7 @@ getDetails().then(movie => {
                                             <img 
                                                 class="resultimg" alt=${movie[i].name}
                                                 src=${imglink}>
-                                            <div class="bottom-left">Ep ${movie[i].epNo}</div>
+                                                ${movie[i].epNo ? ` < div className = "bottom-left" > Ep ${movie[i].epNo} < /div>`: ``}
                                         </div>
                                     </a>
                                     <div class="details">
