@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg mb-3">
+    <nav class="navbar  navbar-expand-lg mb-3" id="nav">
         <div class="container-fluid">
             <a class="navbar-brand" href="/" id="navName">
                 <p class="fs-2 mt-2">Laxmi Chat/Movie Room</p>
@@ -44,15 +44,52 @@
                     <h5 class="modal-title" id="exampleModalLabel">Hello Hostelers!!!!!</h5>
                 </div>
                 <div class="modal-body">
-                    This is your place to find entertainment with movie anytime and to chat with other fellow hostelers even
+                    This is your place to find entertainment with movie anytime and to chat with other fellow hostelers
+                    even
                     when internet is not available. So enjoy!!!!!!
                 </div>
-                <button type="button" class=" btn-close btn-close-white" id="blackButton" data-bs-dismiss="alert"></button>
+                <button type="button" class=" btn-close btn-close-white" id="blackButton"
+                    data-bs-dismiss="alert"></button>
             </div>
         </div>
         <div id="slider">
             <ul id="slideWrap">
+                <li>
+                    <div class="box">
+                        <img id='img0'>
+                        <div class="text-block">
+                            <span class="namepart" id="name0">
+
+                            </span>
+                            <button class="watch">Watch Now</button>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="box">
+                        <img id='img1'>
+                        <div class="text-block">
+                            <span class="namepart" id="name1">
+
+                            </span>
+                            <button class="watch">Watch Now</button>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="box">
+                        <img id='img2'>
+                        <div class="text-block">
+                            <span class="namepart" id="name2">
+
+                            </span>
+                            <button class="watch">Watch Now</button>
+                        </div>
+                    </div>
+                </li>
             </ul>
+            <a id="prev">&#8810;</a>
+            <a id="next">&#8811;</a>
         </div>
         <div id="resultplace" class="mt-5">
             <ul class="searchresult" id="searchresult">
@@ -80,6 +117,65 @@
 <script src="static/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="static/js/index.js"></script>
 <script src="static/js/poster.js"></script>
+<script>
+    while (document.getElementById('img0') !== null) {
+        let responsiveSlider = function () {
+            let slider = document.getElementById("slider");
+            let sliderWidth = slider.offsetWidth;
+            let slideList = document.getElementById("slideWrap");
+            let count = 1;
+            let items = slideList.querySelectorAll("li").length;
+            let prev = document.getElementById("prev");
+            let next = document.getElementById("next");
+
+            window.addEventListener('resize', function () {
+                sliderWidth = slider.offsetWidth;
+            });
+
+            let prevSlide = function () {
+                if (count > 1) {
+                    count = count - 2;
+                    slideList.style.left = "-" + count * sliderWidth + "px";
+                    count++;
+                }
+                else if (count = 1) {
+                    count = items - 1;
+                    slideList.style.left = "-" + count * sliderWidth + "px";
+                    count++;
+                }
+            };
+
+            let nextSlide = function () {
+                if (count < items) {
+                    slideList.style.left = "-" + count * sliderWidth + "px";
+                    count++;
+                }
+                else if (count = items) {
+                    slideList.style.left = "0px";
+                    count = 1;
+                }
+            };
+
+            next.addEventListener("click", function () {
+                nextSlide();
+            });
+
+            prev.addEventListener("click", function () {
+                prevSlide();
+            });
+
+            setInterval(function () {
+                nextSlide()
+            }, 8000);
+
+        };
+
+        window.onload = function () {
+            responsiveSlider();
+        }
+        break;
+    }
+</script>
 <script type="text/javascript">
     function redirect() {
         window.location.replace("/chat")
