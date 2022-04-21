@@ -2,6 +2,7 @@ package main
 
 import (
 	"lan-chat/admin"
+	"lan-chat/admin/users"
 	"lan-chat/chat"
 	"lan-chat/movieHandler"
 	"lan-chat/suggestions"
@@ -19,7 +20,9 @@ func Server(ip string) {
 	server.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
 	server.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
 	server.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
-	server.HandleFunc("/bwahahaha", admin.UploadHandler)
+	server.HandleFunc("/user", users.Handler)
+	server.HandleFunc("/login", users.Login)
+	// server.HandleFunc("/bwahahaha/", admin.Handler)
 	log.Printf("Http server is listening on %s", ip)
 	log.Fatalln(http.ListenAndServe(ip, server))
 }

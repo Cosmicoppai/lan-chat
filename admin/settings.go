@@ -15,6 +15,7 @@ var (
 	username     string
 	password     string
 	databaseName string
+	Secret       string
 	Db           *sql.DB
 )
 
@@ -24,6 +25,7 @@ func setConfig() {
 	username = os.Getenv("username")
 	password = os.Getenv("password")
 	databaseName = os.Getenv("databaseName")
+	Secret = os.Getenv("secret")
 }
 
 func InitializeDB() {

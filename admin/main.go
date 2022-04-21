@@ -14,12 +14,24 @@ import (
 	"strings"
 )
 
+var Tokens []string
+
+func stringInSlice(s string, list []string) bool {
+	for _, item := range list {
+		if item == s {
+			return true
+		}
+	}
+	return false
+}
+
 func admin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/html")
 	http.ServeFile(w, r, "./templates/admin.html")
 }
 
-func UploadHandler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
+	//if r.Header.Get("token") ==
 	switch r.Method {
 	case http.MethodGet:
 		admin(w, r)
@@ -46,17 +58,6 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 		epNo  int
 		_epNo string
 	)
-	if r.FormValue("ep-no") == "" {
-		epNo = 1
-	} else {
-		epNo, err = strconv.Atoi(r.FormValue("ep-no"))
-		if err != nil || epNo < 0 {
-			log.Println(err)
-			httpErrors.UnProcessableEntry(w)
-			return
-		}
-	}
-	_epNo = strconv.Itoa(epNo)
 
 	var fileName string
 	switch videoTyp {
@@ -64,6 +65,17 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 		fileName = "movie"
 	case "series":
 		fileName = "ep-" + _epNo
+		if r.FormValue("ep-no") == "" {
+			epNo = 1
+		} else {
+			epNo, err = strconv.Atoi(r.FormValue("ep-no"))
+			if err != nil || epNo < 0 {
+				log.Println(err)
+				httpErrors.UnProcessableEntry(w)
+				return
+			}
+		}
+		_epNo = strconv.Itoa(epNo)
 	case "ova":
 		fileName = "ova"
 	default:
@@ -116,12 +128,22 @@ func uploadMovie(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		video := Video{Name: videoName, Typ: videoTyp, EpNo: epNo,
-			VideoLink: strings.Replace(videoDestPath, "videos", "file/video", 1),
-			ImageLink: strings.Replace(imageDestPath, "videos", "file/poster", 1),
-			SubLink:   strings.Replace(subDestPath, "videos", "file/sub", 1)}
+		_video := Video{Name: videoName, Typ: videoTyp,
+			VideoLink:  strings.Replace(videoDestPath, "videos", "file/video", 1),
+			PosterLink: strings.Replace(imageDestPath, "videos", "file/poster", 1),
+			SubLink:    strings.Replace(subDestPath, "videos", "file/sub", 1)}
+		switch videoTyp {
+		case "movie":
+			_movie := Movie{Video: _video, Parts: 5}
+			err = _movie.save()
+		case "series":
+			_series := Series{Video: _video, TotalEp: 10, EpAired: epNo}
+			err = _series.save()
+		case "ova":
+			// err = _video.save()
 
-		err = video.save()
+		}
+
 		if err != nil {
 			log.Println("Err while saving Video in Database", err)
 			httpErrors.InternalServerError(w)
