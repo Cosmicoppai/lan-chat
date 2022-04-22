@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"lan-chat/admin"
 	"lan-chat/admin/middleware"
 	"lan-chat/admin/users"
@@ -10,6 +11,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -43,27 +45,72 @@ func getIpAddress() string {
 }
 
 func main() {
+	if len(os.Args) < 2 {
+		log.Fatalln("Command not specified !..\nExpected runserver or create-superuser sub-command")
+	}
+	_ipAddress := getIpAddress()
+	if _ipAddress == "" {
+		os.Exit(1)
+	}
+
 	envFilePath, _ := filepath.Abs(".env")
 	admin.LoadEnv(envFilePath)
 	admin.InitializeDB()
 	defer admin.Db.Close()
 
-	_ipAddress := getIpAddress()
-	if _ipAddress != "" {
-		go Server(_ipAddress) // start a goroutine
-	} else {
-		return
+	runServerCmd := flag.NewFlagSet("runserver", flag.ExitOnError)
+	host := runServerCmd.String("host", _ipAddress, "Host name or IP address")
+	socketPort := runServerCmd.String("sockPort", "9000", "Port address of socket server")
+
+	superUserCmd := flag.NewFlagSet("create-superuser", flag.ExitOnError)
+
+	username := superUserCmd.String("username", "", "Username")
+	password := superUserCmd.String("password", "", "Password")
+	switch os.Args[1] {
+	case "create-superuser":
+		handleCreateSuperUser(superUserCmd, username, password)
+	case "runserver":
+		handleRunServer(runServerCmd, host, socketPort)
+	default:
+		log.Fatalf("unknown command %s\n", os.Args[1])
+
 	}
 
-	conn, err_ := net.Listen("tcp", _ipAddress+":9000")
+}
+
+func handleRunServer(runServerCmd *flag.FlagSet, host *string, sockPort *string) {
+	err := runServerCmd.Parse(os.Args[2:])
+	if err != nil {
+		log.Fatalln(err)
+	}
+	runServers(*host, *sockPort)
+
+}
+
+func handleCreateSuperUser(superUserCmd *flag.FlagSet, username *string, password *string) {
+	err := superUserCmd.Parse(os.Args[2:])
+	if err != nil || *username == "" || *password == "" {
+		if err == nil {
+			log.Fatalln("Enter both username and password")
+		}
+		log.Fatalln(err)
+	}
+	users.CreateSuperUser(*username, *password)
+
+}
+
+func runServers(host string, socketPort string) {
+
+	go Server(host) // start a goroutine
+
+	conn, err_ := net.Listen("tcp", host+":"+socketPort)
 	if err_ != nil {
 		log.Fatalln(err_)
 	}
-	log.Printf("Socket server is listening on %s", _ipAddress+":9000")
+	log.Printf("Socket server is listening on %s:%s", host, socketPort)
 	e := chat.Serve(conn)
 	if e != nil {
 		log.Println("error in chat.Serve", e)
 		return
 	}
-
 }

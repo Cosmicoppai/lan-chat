@@ -45,13 +45,13 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 func registerUser(w http.ResponseWriter, r *http.Request) {
 	user := User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil && (user.Username == "" || (user.Password == "")) {
+	if err != nil || user.Username == "" || user.Password == "" {
 		log.Println(err)
 		http.Error(w, "Data is in Invalid Format", http.StatusUnprocessableEntity)
 		return
 	}
 	hashedPassword := hashPass(user.Password)
-	_, err = admin.Db.Exec("INSERT INTO lan_show.users VALUES ($1, $2)", user.Username, hashedPassword)
+	err = InsertUser(user.Username, hashedPassword)
 	if err, ok := err.(*pq.Error); ok {
 		if err.Code.Class() == "23" { // if error is about integrity constraint violation
 			http.Error(w, "username taken", http.StatusConflict)
@@ -215,4 +215,20 @@ func checkCredentials(w http.ResponseWriter, username string, pass string) bool 
 func hashPass(p string) string {
 	p = p + admin.Secret
 	return fmt.Sprintf("%x", sha256.Sum256([]byte(p)))
+}
+
+func CreateSuperUser(username string, password string) {
+	hashedPassword := hashPass(password)
+	err := InsertUser(username, hashedPassword)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	log.Println("Super User Successfully created ....")
+}
+
+func InsertUser(username string, password string) error {
+	log.Println(username, password)
+	_, err := admin.Db.Exec("INSERT INTO lan_show.users VALUES ($1, $2)", username, password)
+	return err
 }
