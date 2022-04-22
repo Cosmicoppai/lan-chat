@@ -2,6 +2,7 @@ package users
 
 import (
 	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -148,10 +149,48 @@ func getToken(username string) string {
 }
 
 func listUsers(w http.ResponseWriter, r *http.Request) {
+	usersList := map[string][]string{"users": {}}
+	var user string
+	rows, err := admin.Db.Query("SELECT username FROM lan_show.users;")
+	if dbErrors.InternalServerError(err) {
+		log.Println("Error in extracting hashed password: ", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&user)
+		if err != nil {
+			log.Println(err)
+		}
+		usersList["users"] = append(usersList["users"], user)
+	}
+	err = json.NewEncoder(w).Encode(usersList)
+	if err != nil {
+		log.Println("Error while encoding the data into Json: ", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 }
 
 func listUser(w http.ResponseWriter, r *http.Request) {
+	var user string
+	row := admin.Db.QueryRow("SELECT username FROM lan_show.users;")
+	err := row.Scan(&user)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "No user Exist", http.StatusNotFound)
+			return
+		}
+		log.Println(err)
+	}
+	err = json.NewEncoder(w).Encode(map[string]string{"user": user})
+	if err != nil {
+		log.Println("Error while encoding the data into Json: ", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 }
 
