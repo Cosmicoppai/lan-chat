@@ -44,7 +44,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 func registerUser(w http.ResponseWriter, r *http.Request) {
 	user := User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
+	if err != nil && (user.Username == "" || (user.Password == "")) {
 		log.Println(err)
 		http.Error(w, "Data is in Invalid Format", http.StatusUnprocessableEntity)
 		return
@@ -77,7 +77,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		decodedCred := string(_decodedCred)
 		sepIndex := strings.Index(decodedCred, ":")
 		username, pass := decodedCred[:sepIndex], decodedCred[sepIndex+1:]
-		if err = checkCredentials(w, username, pass); err != nil {
+		if checkCredentials(w, username, pass) {
 			token := getToken(username)
 			tokenData := map[string]string{"token": token}
 			_ = json.NewEncoder(w).Encode(tokenData)
@@ -112,27 +112,20 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUsername(w http.ResponseWriter, r *http.Request) {
-	token := r.Header.Get("Authorization")
-	if token != "" {
-		token = strings.TrimPrefix(token, "Bearer ")
-		username, err := jwt.ValidateToken(token)
-		if err != nil {
-			http.Error(w, "Invalid Token", http.StatusUnauthorized)
+	username := r.Context().Value("username").(*User).Username
+	log.Println(username)
+	data := make(map[string]interface{})
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if newUsername, ok := data["username"].(string); ok && err == nil {
+		rows, err := admin.Db.Exec("UPDATE lan_show.users SET username=$1 WHERE username=$2", username, newUsername)
+		if rowsAffected, _ := rows.RowsAffected(); rowsAffected > 1 && err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
-		data := make(map[string]interface{})
-		err = json.NewDecoder(r.Body).Decode(&data)
-		if newUsername, ok := data["username"].(string); ok && err == nil {
-			rows, err := admin.Db.Exec("UPDATE lan_show.users SET username=$1 WHERE username=$2", username, newUsername)
-			if rowsAffected, _ := rows.RowsAffected(); rowsAffected > 1 && err != nil {
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-			w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusOK)
 
-		} else {
-			http.Error(w, "Invalid data format", http.StatusUnprocessableEntity)
-		}
+	} else {
+		http.Error(w, "Invalid data format", http.StatusUnprocessableEntity)
 	}
 }
 
@@ -162,21 +155,21 @@ func listUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func checkCredentials(w http.ResponseWriter, username string, pass string) error {
+func checkCredentials(w http.ResponseWriter, username string, pass string) bool {
 	hashedPass := hashPass(pass)
 	row, err := admin.Db.Query("SELECT password FROM lan_show.users WHERE username=$1", username)
 	if dbErrors.InternalServerError(err) {
 		log.Println("Error in extracting hashed password: ", err)
 		http.Error(w, "", http.StatusInternalServerError)
-		return err
+		return false
 	}
 	_ = row.Scan(&pass)
 	if pass == hashedPass {
 		w.WriteHeader(http.StatusOK)
-		return nil
+		return true
 	}
 	http.Error(w, "", http.StatusUnauthorized)
-	return fmt.Errorf("unauthorized")
+	return false
 
 }
 

@@ -13,6 +13,7 @@ import (
 
 var secret = admin.Secret
 
+// This will create New Token
 func GenerateToken(header string, payload map[string]string) (string, error) {
 	// create a new hash of type sha256. We pass the secret key to it
 	h := hmac.New(sha256.New, []byte(secret))
