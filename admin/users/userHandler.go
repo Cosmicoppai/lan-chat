@@ -5,7 +5,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/lib/pq"
 	"lan-chat/admin"
+	"lan-chat/admin/dbErrors"
 	"lan-chat/admin/jwt"
 	"log"
 	"net/http"
@@ -47,9 +49,13 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Data is in Invalid Format", http.StatusUnprocessableEntity)
 		return
 	}
-	hashPassword := hashPass(user.Password)
-	_, err = admin.Db.Exec("INSERT INTO lan_show.users VALUES ($1, $2)", user.Username, hashPassword)
-	if err != nil {
+	hashedPassword := hashPass(user.Password)
+	_, err = admin.Db.Exec("INSERT INTO lan_show.users VALUES ($1, $2)", user.Username, hashedPassword)
+	if err, ok := err.(*pq.Error); ok {
+		if err.Code.Class() == "23" { // if error is about integrity constraint violation
+			http.Error(w, "username taken", http.StatusConflict)
+			return
+		}
 		log.Println("Error while creating user", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -75,9 +81,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			token := getToken(username)
 			tokenData := map[string]string{"token": token}
 			_ = json.NewEncoder(w).Encode(tokenData)
-			// _, _ = w.Write([]byte(token))
 			return
 		}
+		return
 	}
 	http.Error(w, "Authorization Header not present", http.StatusBadRequest)
 
@@ -92,19 +98,16 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid Token", http.StatusUnauthorized)
 			return
 		}
-		res, err := admin.Db.Exec("DELETE FROM lan_show.users where username=$1", username)
-		if err != nil {
+		_, err = admin.Db.Exec("DELETE FROM lan_show.users where username=$1", username)
+		if dbErrors.InternalServerError(err) {
 			log.Println("Error while deleting user", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
-		rowsAffected, _ := res.RowsAffected()
-		if rowsAffected == 0 {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
+		w.WriteHeader(http.StatusOK)
+		return
 	}
-	w.WriteHeader(http.StatusInternalServerError)
+	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 
 }
 
@@ -162,7 +165,7 @@ func listUser(w http.ResponseWriter, r *http.Request) {
 func checkCredentials(w http.ResponseWriter, username string, pass string) error {
 	hashedPass := hashPass(pass)
 	row, err := admin.Db.Query("SELECT password FROM lan_show.users WHERE username=$1", username)
-	if err != nil {
+	if dbErrors.InternalServerError(err) {
 		log.Println("Error in extracting hashed password: ", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return err
