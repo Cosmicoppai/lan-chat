@@ -8,14 +8,14 @@ import (
 	"errors"
 	"fmt"
 	"lan-chat/admin"
-	"log"
+	"lan-chat/logger"
 	"strings"
 	"time"
 )
 
 var secret = admin.Secret
 
-var Tokens map[string][]string
+var Tokens = make(map[string][]string)
 
 type Claims struct {
 	Sub     string      `json:"sub"`
@@ -64,7 +64,8 @@ func GenerateToken(header map[string]string, payload map[string]interface{}) (st
 	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
 	tokenStr := message + "." + signature
-	username := payload["username"].(string)
+	username := payload["sub"].(string)
+
 	Tokens[username] = append(Tokens[username], tokenStr)
 	return tokenStr, nil
 }
@@ -95,7 +96,7 @@ func ValidateToken(token string) (Claims, error) {
 
 	err = json.Unmarshal(payload, &claims) // deserialize the payloadData
 	if err != nil {
-		log.Println("Error in unmarshalling the payload: ", err)
+		logger.ErrorLog.Println("Error in unmarshalling the payload: ", err)
 		return claims, err
 	}
 

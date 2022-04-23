@@ -6,9 +6,9 @@ import (
 	"lan-chat/admin/middleware"
 	"lan-chat/admin/users"
 	"lan-chat/chat"
+	"lan-chat/logger"
 	"lan-chat/movieHandler"
 	"lan-chat/suggestions"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -17,25 +17,32 @@ import (
 
 func Server(ip string) {
 	ip = ip + ":80"
-	server := http.NewServeMux()
-	server.HandleFunc("/", movieHandler.Home)
-	server.HandleFunc("/static/", movieHandler.StaticPages)        // endpoint to get static pages
-	server.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
-	server.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
-	server.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
-	server.Handle("/users", middleware.AuthMiddleware(http.HandlerFunc(users.ListUsers)))
-	server.Handle("/user", middleware.AuthMiddleware(http.HandlerFunc(users.Handler)))
-	server.HandleFunc("/login", users.Login)
-	// server.HandleFunc("/bwahahaha/", admin.Handler)
-	log.Printf("Http server is listening on %s", ip)
-	log.Fatalln(http.ListenAndServe(ip, server))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", movieHandler.Home)
+	mux.HandleFunc("/static/", movieHandler.StaticPages)        // endpoint to get static pages
+	mux.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
+	mux.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
+	mux.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
+	mux.Handle("/users", middleware.AdminMiddleware(http.HandlerFunc(users.ListUsers)))
+	mux.Handle("/user", users.Handler())
+	mux.HandleFunc("/login", users.Login)
+	// mux.HandleFunc("/bwahahaha/", admin.Handler)
+
+	muxWithLogging := middleware.Logger(mux)
+	logger.InfoLog.Printf("Http server is listening on %s", ip)
+
+	srv := &http.Server{
+		ErrorLog: logger.ErrorLog,
+		Handler:  muxWithLogging,
+		Addr:     ip,
+	}
+	logger.ErrorLog.Fatalln(srv.ListenAndServe())
 }
 
 func getIpAddress() string {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		log.Println("Make Sure you're connected to the internet")
-		log.Panic(err)
+		logger.ErrorLog.Fatalln("Make Sure you're connected to the internet")
 	}
 
 	defer func(conn net.Conn) {
@@ -47,7 +54,7 @@ func getIpAddress() string {
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatalln("Command not specified !..\nExpected runserver or create-superuser sub-command")
+		logger.ErrorLog.Fatalln("Command not specified !..\nExpected runserver or create-superuser sub-command")
 	}
 	_ipAddress := getIpAddress()
 	if _ipAddress == "" {
@@ -73,7 +80,7 @@ func main() {
 	case "runserver":
 		handleRunServer(runServerCmd, host, socketPort)
 	default:
-		log.Fatalf("unknown command %s\n", os.Args[1])
+		logger.ErrorLog.Fatalf("unknown command %s\n", os.Args[1])
 
 	}
 
@@ -82,7 +89,7 @@ func main() {
 func handleRunServer(runServerCmd *flag.FlagSet, host *string, sockPort *string) {
 	err := runServerCmd.Parse(os.Args[2:])
 	if err != nil {
-		log.Fatalln(err)
+		logger.ErrorLog.Fatalln(err)
 	}
 	runServers(*host, *sockPort)
 
@@ -92,9 +99,9 @@ func handleCreateSuperUser(superUserCmd *flag.FlagSet, username *string, passwor
 	err := superUserCmd.Parse(os.Args[2:])
 	if err != nil || *username == "" || *password == "" {
 		if err == nil {
-			log.Fatalln("Enter both username and password")
+			logger.ErrorLog.Fatalln("Enter both username and password")
 		}
-		log.Fatalln(err)
+		logger.ErrorLog.Fatalln(err)
 	}
 	users.CreateSuperUser(*username, *password)
 
@@ -106,12 +113,12 @@ func runServers(host string, socketPort string) {
 
 	conn, err_ := net.Listen("tcp", host+":"+socketPort)
 	if err_ != nil {
-		log.Fatalln(err_)
+		logger.ErrorLog.Fatalln(err_)
 	}
-	log.Printf("Socket server is listening on %s:%s", host, socketPort)
+	logger.InfoLog.Printf("Socket server is listening on %s:%s", host, socketPort)
 	e := chat.Serve(conn)
 	if e != nil {
-		log.Println("error in chat.Serve", e)
+		logger.ErrorLog.Println("error in chat.Serve", e)
 		return
 	}
 }
