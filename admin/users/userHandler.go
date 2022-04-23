@@ -10,39 +10,36 @@ import (
 	"lan-chat/admin"
 	"lan-chat/admin/dbErrors"
 	"lan-chat/admin/jwt"
+	"lan-chat/admin/middleware"
 	"lan-chat/httpErrors"
-	"log"
+	"lan-chat/logger"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 )
 
-func Handler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		registerUser(w, r)
-	case http.MethodGet:
-		listUser(w, r)
-	case http.MethodPut:
-		updateUsername(w, r)
-	case http.MethodDelete:
-		deleteUser(w, r)
+func Handler() http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			middleware.AdminMiddleware(http.HandlerFunc(registerUser)).ServeHTTP(w, r)
+		case http.MethodGet:
+			middleware.AuthMiddleware(http.HandlerFunc(listUser)).ServeHTTP(w, r)
+		case http.MethodPut:
+			middleware.AuthMiddleware(http.HandlerFunc(updateUsername)).ServeHTTP(w, r)
+		case http.MethodDelete:
+			middleware.AuthMiddleware(http.HandlerFunc(deleteUser)).ServeHTTP(w, r)
+		}
 	}
 
+	return http.HandlerFunc(fn)
 }
 
 func registerUser(w http.ResponseWriter, r *http.Request) { // only admin can register a user
-	claims := r.Context().Value("claims").(jwt.Claims)
-	if !claims.IsAdmin {
-		httpErrors.Forbidden(w)
-		return
-	}
 	user := User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil || user.Username == "" || user.Password == "" {
-		log.Println(err)
-		//http.Error(w, "Data is in Invalid Format", http.StatusUnprocessableEntity)
+		logger.ErrorLog.Println(err)
 		httpErrors.UnProcessableEntry(w, "Data is in Invalid Format")
 		return
 	}
@@ -53,7 +50,7 @@ func registerUser(w http.ResponseWriter, r *http.Request) { // only admin can re
 			http.Error(w, "username taken", http.StatusConflict)
 			return
 		}
-		log.Println("Error while creating user", err)
+		logger.ErrorLog.Println("Error while creating user", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -72,7 +69,7 @@ func Login(w http.ResponseWriter, r *http.Request) { // anyone with their accoun
 		cred = strings.TrimPrefix(cred, "Basic ")
 		_decodedCred, err := base64.StdEncoding.DecodeString(cred)
 		if err != nil {
-			log.Println("Error while decoding authorization header", err)
+			logger.ErrorLog.Println("Error while decoding authorization header", err)
 			http.Error(w, "Invalid Authorization Header", http.StatusBadRequest)
 			return
 		}
@@ -93,10 +90,23 @@ func Login(w http.ResponseWriter, r *http.Request) { // anyone with their accoun
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value("claims").(jwt.Claims).Sub
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		httpErrors.BadRequest(w)
+		return
+	}
+	requestedBy := r.Context().Value("claims").(jwt.Claims)
+	if requestedBy.IsAdmin || (requestedBy.Sub == username) { // if the request has been made by admin or the user itself
+		_deleteUser(w, username)
+		return
+	}
+	httpErrors.Forbidden(w)
+}
+
+func _deleteUser(w http.ResponseWriter, username string) {
 	_, err := admin.Db.Exec("DELETE FROM lan_show.users where username=$1", username)
 	if dbErrors.InternalServerError(err) {
-		log.Println("Error while deleting user", err)
+		logger.ErrorLog.Println("Error while deleting user", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -106,19 +116,24 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUsername(w http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value("claims").(jwt.Claims).Sub
+	claims := r.Context().Value("claims").(jwt.Claims)
+	username := claims.Sub
 	data := make(map[string]interface{})
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if newUsername, ok := data["username"].(string); ok && err == nil {
-		rows, err := admin.Db.Exec("UPDATE lan_show.users SET username=$1 WHERE username=$2", username, newUsername)
-		if rowsAffected, _ := rows.RowsAffected(); rowsAffected > 1 && err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		_, err := admin.Db.Exec("UPDATE lan_show.users SET username=$1 WHERE username=$2", newUsername, username)
+		if err != nil {
+			httpErrors.InternalServerError(w)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
+		jwt.DeleteUserTokens(username)
+		token := getToken(username, claims.IsAdmin)
+		tokenData := map[string]string{"msg": "username successfully updated", "token": token}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(tokenData)
 
 	} else {
-		http.Error(w, "Invalid data format", http.StatusUnprocessableEntity)
+		httpErrors.UnProcessableEntry(w)
 	}
 }
 
@@ -127,7 +142,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	var user string
 	rows, err := admin.Db.Query("SELECT username FROM lan_show.users;")
 	if dbErrors.InternalServerError(err) {
-		log.Println("Error in extracting users:  ", err)
+		logger.ErrorLog.Println("Error in extracting users:  ", err)
 		httpErrors.InternalServerError(w)
 		return
 	}
@@ -135,13 +150,13 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		err = rows.Scan(&user)
 		if err != nil {
-			log.Println(err)
+			logger.ErrorLog.Println(err)
 		}
 		usersList["users"] = append(usersList["users"], user)
 	}
 	err = json.NewEncoder(w).Encode(usersList)
 	if err != nil {
-		log.Println("Error while encoding the data into Json: ", err)
+		logger.ErrorLog.Println("Error while encoding the data into Json: ", err)
 		httpErrors.InternalServerError(w)
 		return
 	}
@@ -149,9 +164,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func listUser(w http.ResponseWriter, r *http.Request) {
-	uri, _ := url.Parse(r.RequestURI)
-	queryParams, _ := url.ParseQuery(uri.RawQuery)
-	username := queryParams.Get("username")
+	username := r.URL.Query().Get("username")
 	if username == "" {
 		httpErrors.BadRequest(w)
 		return
@@ -164,11 +177,11 @@ func listUser(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "No user Exist", http.StatusNotFound)
 			return
 		}
-		log.Println(err)
+		logger.ErrorLog.Println(err)
 	}
 	err = json.NewEncoder(w).Encode(map[string]string{"user": user})
 	if err != nil {
-		log.Println("Error while encoding the data into Json: ", err)
+		logger.ErrorLog.Println("Error while encoding the data into Json: ", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -183,7 +196,7 @@ func checkCredentials(w http.ResponseWriter, username string, pass string) (isAd
 
 	err := row.Scan(&pass, &isAdmin)
 	if dbErrors.InternalServerError(err) {
-		log.Println("Error in extracting hashed password: ", err)
+		logger.ErrorLog.Println("Error in extracting hashed password: ", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return isAdmin, false
 	}
@@ -204,10 +217,10 @@ func CreateSuperUser(username string, password string) {
 	hashedPassword := hashPass(password)
 	err := insertUser(username, hashedPassword, true)
 	if err != nil {
-		log.Println(err.Error())
+		logger.ErrorLog.Println(err.Error())
 		return
 	}
-	log.Println("Super User Successfully created ....")
+	logger.ErrorLog.Println("Super User Successfully created ....")
 }
 
 func insertUser(username string, password string, _admin ...bool) error {
@@ -229,12 +242,11 @@ func getToken(username string, isAdmin bool) string {
 	if isAdmin {
 		claimsMap["isAdmin"] = true
 	}
-	log.Println(claimsMap)
 
 	header := map[string]string{"alg": "HS256"}
 	token, err := jwt.GenerateToken(header, claimsMap)
 	if err != nil {
-		log.Println("Error while generating token", err)
+		logger.ErrorLog.Println("Error while generating token", err)
 		return token
 	}
 	return token
