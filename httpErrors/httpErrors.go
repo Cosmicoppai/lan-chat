@@ -4,16 +4,28 @@ import (
 	"net/http"
 )
 
-func NotFound(w http.ResponseWriter) {
-	http.Error(w, "Nothing here stranger, Go Back!..", http.StatusNotFound)
+func NotFound(w http.ResponseWriter, error ...string) {
+	_error := "Nothing here stranger, Go Back!.."
+	if len(error) > 0 {
+		_error = error[0]
+	}
+	http.Error(w, _error, http.StatusNotFound)
 }
 
-func MethodNotAllowed(w http.ResponseWriter) {
-	http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
+func MethodNotAllowed(w http.ResponseWriter, error ...string) {
+	_error := "Invalid Method"
+	if len(error) > 0 {
+		_error = error[0]
+	}
+	http.Error(w, _error, http.StatusMethodNotAllowed)
 }
 
-func InternalServerError(w http.ResponseWriter) {
-	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+func InternalServerError(w http.ResponseWriter, error ...string) {
+	_error := "Internal Server Error"
+	if len(error) > 0 {
+		_error = error[0]
+	}
+	http.Error(w, _error, http.StatusInternalServerError)
 }
 
 func UnProcessableEntry(w http.ResponseWriter, error ...string) {
