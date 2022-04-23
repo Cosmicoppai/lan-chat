@@ -18,21 +18,20 @@ import (
 	"time"
 )
 
-func Handler() http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodPost:
-			middleware.AdminMiddleware(http.HandlerFunc(registerUser)).ServeHTTP(w, r)
-		case http.MethodGet:
-			middleware.AuthMiddleware(http.HandlerFunc(listUser)).ServeHTTP(w, r)
-		case http.MethodPut:
-			middleware.AuthMiddleware(http.HandlerFunc(updateUsername)).ServeHTTP(w, r)
-		case http.MethodDelete:
-			middleware.AuthMiddleware(http.HandlerFunc(deleteUser)).ServeHTTP(w, r)
-		}
+func Handler(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodPost:
+		middleware.AdminMiddleware(http.HandlerFunc(registerUser)).ServeHTTP(w, r)
+	case http.MethodGet:
+		middleware.AuthMiddleware(http.HandlerFunc(listUser)).ServeHTTP(w, r)
+	case http.MethodPut:
+		middleware.AuthMiddleware(http.HandlerFunc(updateUsername)).ServeHTTP(w, r)
+	case http.MethodDelete:
+		middleware.AuthMiddleware(http.HandlerFunc(deleteUser)).ServeHTTP(w, r)
 	}
 
-	return http.HandlerFunc(fn)
+	// return http.HandlerFunc(fn)
 }
 
 func registerUser(w http.ResponseWriter, r *http.Request) { // only admin can register a user
