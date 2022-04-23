@@ -4,6 +4,7 @@ import (
 	"flag"
 	"lan-chat/admin"
 	"lan-chat/admin/middleware"
+	"lan-chat/admin/show_typ"
 	"lan-chat/admin/users"
 	"lan-chat/chat"
 	"lan-chat/logger"
@@ -24,8 +25,9 @@ func Server(ip string) {
 	mux.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
 	mux.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
 	mux.Handle("/users", middleware.AdminMiddleware(http.HandlerFunc(users.ListUsers)))
-	mux.Handle("/user", users.Handler())
+	mux.HandleFunc("/user", users.Handler)
 	mux.HandleFunc("/login", users.Login)
+	mux.HandleFunc("/type", show_typ.Handler)
 	// mux.HandleFunc("/bwahahaha/", admin.Handler)
 
 	muxWithLogging := middleware.Logger(mux)
