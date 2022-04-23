@@ -220,7 +220,7 @@ func CreateSuperUser(username string, password string) {
 		logger.ErrorLog.Println(err.Error())
 		return
 	}
-	logger.ErrorLog.Println("Super User Successfully created ....")
+	logger.InfoLog.Println("Super User Successfully created ....")
 }
 
 func insertUser(username string, password string, _admin ...bool) error {
