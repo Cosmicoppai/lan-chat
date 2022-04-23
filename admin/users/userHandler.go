@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/lib/pq"
 	"lan-chat/admin"
 	"lan-chat/admin/dbErrors"
 	"lan-chat/admin/jwt"
@@ -44,8 +43,8 @@ func registerUser(w http.ResponseWriter, r *http.Request) { // only admin can re
 	}
 	hashedPassword := hashPass(user.Password)
 	err = insertUser(user.Username, hashedPassword)
-	if err, ok := err.(*pq.Error); ok {
-		if err.Code.Class() == "23" { // if error is about integrity constraint violation
+	if err != nil {
+		if dbErrors.IntegrityViolation(err) { // if error is about integrity constraint violation
 			http.Error(w, "username taken", http.StatusConflict)
 			return
 		}
