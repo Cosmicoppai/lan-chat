@@ -78,7 +78,7 @@ func Login(w http.ResponseWriter, r *http.Request) { // anyone with their accoun
 		username, pass := decodedCred[:sepIndex], decodedCred[sepIndex+1:]
 		if isAdmin, credOk := checkCredentials(w, username, pass); credOk {
 			token := getToken(username, isAdmin)
-			tokenData := map[string]string{"token": token}
+			tokenData := map[string]interface{}{"token": token, "isAdmin": isAdmin}
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(tokenData)
 			return
