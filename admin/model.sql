@@ -5,7 +5,8 @@ SET SEARCH_PATH TO lan_show;
 
 CREATE TABLE IF NOT EXISTS users (
     username varchar(20) PRIMARY KEY ,
-    password varchar(300) NOT NULL
+    password varchar(300) NOT NULL,
+    isAdmin bool NOT NULL DEFAULT FALSE
 );
 
 

@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"lan-chat/admin/jwt"
+	"lan-chat/httpErrors"
 	"net/http"
 	"strings"
 )
@@ -12,12 +13,16 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		token := r.Header.Get("Authorization")
 		if token != "" {
 			token = strings.TrimPrefix(token, "Bearer ")
-			username, err := jwt.ValidateToken(token)
+			claims, err := jwt.ValidateToken(token)
 			if err != nil {
-				http.Error(w, "Invalid Token", http.StatusUnauthorized)
+				if err == jwt.InvalidToken {
+					httpErrors.UnAuthorized(w, "Invalid Token")
+					return
+				}
+				httpErrors.InternalServerError(w)
 				return
 			}
-			ctxWithUser := context.WithValue(r.Context(), "username", username)
+			ctxWithUser := context.WithValue(r.Context(), "claims", claims)
 			r = r.WithContext(ctxWithUser)
 			next.ServeHTTP(w, r)
 		}

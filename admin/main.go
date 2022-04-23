@@ -14,17 +14,6 @@ import (
 	"strings"
 )
 
-var Tokens []string
-
-func stringInSlice(s string, list []string) bool {
-	for _, item := range list {
-		if item == s {
-			return true
-		}
-	}
-	return false
-}
-
 func admin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/html")
 	http.ServeFile(w, r, "./templates/admin.html")

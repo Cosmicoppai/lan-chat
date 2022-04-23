@@ -23,6 +23,7 @@ func Server(ip string) {
 	server.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
 	server.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
 	server.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
+	server.Handle("/users", middleware.AuthMiddleware(http.HandlerFunc(users.ListUsers)))
 	server.Handle("/user", middleware.AuthMiddleware(http.HandlerFunc(users.Handler)))
 	server.HandleFunc("/login", users.Login)
 	// server.HandleFunc("/bwahahaha/", admin.Handler)

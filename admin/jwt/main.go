@@ -5,76 +5,113 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"lan-chat/admin"
 	"log"
 	"strings"
+	"time"
 )
 
 var secret = admin.Secret
 
-// This will create New Token
-func GenerateToken(header string, payload map[string]string) (string, error) {
+var Tokens map[string][]string
+
+type Claims struct {
+	Sub     string      `json:"sub"`
+	IsAdmin bool        `json:"isAdmin"`
+	Exp     json.Number `json:"exp"`
+	ISS     string      `json:"iss"`
+}
+
+func tokenPresent(s string, list []string) bool {
+	for _, item := range list {
+		if item == s {
+			return true
+		}
+	}
+	return false
+}
+
+var InvalidToken = errors.New("invalid token")
+
+// GenerateToken : This will create New Token
+func GenerateToken(header map[string]string, payload map[string]interface{}) (string, error) {
 	// create a new hash of type sha256. We pass the secret key to it
 	h := hmac.New(sha256.New, []byte(secret))
-	header64 := base64.StdEncoding.EncodeToString([]byte(header))
-	// We then Marshal the payload which is a map. This converts it to a string of JSON.
-	payloadstr, err := json.Marshal(payload)
+	headerStr, err := json.Marshal(header)
 	if err != nil {
 		fmt.Println("Error generating Token")
-		return string(payloadstr), err
+		return "", err
 	}
-	payload64 := base64.StdEncoding.EncodeToString(payloadstr)
+	header64 := base64.StdEncoding.EncodeToString(headerStr)
 
-	// Now add the encoded string.
+	payloadStr, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Println("Error generating Token")
+		return "", err
+	}
+	payload64 := base64.StdEncoding.EncodeToString(payloadStr)
+
+	// add the encoded string.
 	message := header64 + "." + payload64
 
 	// We have the unsigned message ready.
-	unsignedStr := header + string(payloadstr)
+	unsignedStr := string(headerStr) + string(payloadStr)
 
-	// We write this to the SHA256 to hash it.
+	// write this to the SHA256 to hash it.
 	h.Write([]byte(unsignedStr))
 	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
-	//Finally, we have the token
 	tokenStr := message + "." + signature
+	username := payload["username"].(string)
+	Tokens[username] = append(Tokens[username], tokenStr)
 	return tokenStr, nil
 }
 
-//  This helps in validating the token
-func ValidateToken(token string) (string, error) {
+// ValidateToken : This helps in validating the token
+func ValidateToken(token string) (Claims, error) {
+	claims := Claims{}
 	// JWT has 3 parts separated by '.'
 	splitToken := strings.Split(token, ".")
 	// if length is not 3, we know that the token is corrupt
 	if len(splitToken) != 3 {
-		return "", nil
+		return claims, InvalidToken
 	}
 
 	// decode the header and payload back to strings
 	header, err := base64.StdEncoding.DecodeString(splitToken[0])
 	if err != nil {
-		return "", err
+		return claims, InvalidToken
 	}
 	payload, err := base64.StdEncoding.DecodeString(splitToken[1])
 	if err != nil {
-		return "", err
+		return claims, InvalidToken
 	}
 	//again create the signature
 	unsignedStr := string(header) + string(payload)
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(unsignedStr))
 
+	err = json.Unmarshal(payload, &claims) // deserialize the payloadData
+	if err != nil {
+		log.Println("Error in unmarshalling the payload: ", err)
+		return claims, err
+	}
+
 	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
-	// if both the signature don’t match, this means token is wrong
-	if signature != splitToken[2] {
-		return "", nil
+	// check signature, expire time and token existence
+	expTime, _ := claims.Exp.Int64()
+
+	username := claims.Sub
+	if signature != splitToken[2] || !tokenPresent(token, Tokens[username]) || expTime < time.Now().Unix() {
+		return claims, InvalidToken
 	}
-	payloadData := make(map[string]interface{})
-	err = json.Unmarshal([]byte(payload), &payloadData)
-	if err != nil {
-		log.Println(err)
-		return "", nil
-	}
-	return payloadData["sub"].(string), nil
+
+	return claims, nil
+}
+
+func DeleteUserTokens(username string) {
+	delete(Tokens, username)
 }
