@@ -8,7 +8,7 @@ type Show struct {
 }
 
 type ShowFilter struct {
-	Name     string `json:"name"`
-	TotalEps *int64 `json:"totalEps"`
-	Type     string `json:"type"`
+	Name     string `json:"name,omitempty"`
+	TotalEps *int64 `json:"totalEps,string,omitempty"`
+	Type     string `json:"type,omitempty"`
 }

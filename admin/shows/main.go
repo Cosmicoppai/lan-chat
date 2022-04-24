@@ -58,17 +58,31 @@ func createShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListShows(w http.ResponseWriter, r *http.Request) {
-	var showFilter ShowFilter
-	queryParams := r.URL.Query()
-	for key, value := range queryParams {
-		err := admin.SetField(showFilter, key, value)
-		if err != nil {
-			logger.ErrorLog.Println(err)
-			httpErrors.UnProcessableEntry(w)
-			return
-		}
+	if r.Method != http.MethodGet {
+		httpErrors.MethodNotAllowed(w)
+		return
 	}
-	rows, err := _listFilter(showFilter)
+	var showFilter ShowFilter
+	FilterMap := map[string]string{}
+
+	queryParams := r.URL.Query()
+	for key, value := range queryParams { // convert map[string][]string to map[string]string
+		FilterMap[key] = value[0]
+	}
+	data, _ := json.Marshal(FilterMap)
+	err := json.Unmarshal(data, &showFilter)
+	if err != nil {
+		logger.ErrorLog.Println(err)
+		httpErrors.UnProcessableEntry(w, "One or more invalid query parameter")
+		return
+	}
+	var rows *sql.Rows
+
+	if (ShowFilter{}) != showFilter {
+		rows, err = _listFilter(showFilter, "SELECT * FROM lan_show.shows WHERE ", true)
+	} else {
+		rows, err = _listFilter(showFilter, "SELECT * from lan_show.shows;", false)
+	}
 
 	if err != nil && dbErrors.InternalServerError(err) {
 		logger.ErrorLog.Println(err)
@@ -78,27 +92,37 @@ func ListShows(w http.ResponseWriter, r *http.Request) {
 	_listShowHelper(w, rows)
 }
 
-func _listFilter(showFilter ShowFilter) (*sql.Rows, error) {
-	baseQuery := "SELECT FROM lan_show.shows WHERE ;"
-	filterQuery := ""
-	var filters []interface{}
+func _listFilter(showFilter ShowFilter, baseQuery string, filter bool) (*sql.Rows, error) {
+	var (
+		rows *sql.Rows
+		err  error
+	)
+	if filter {
+		filterQuery := ""
+		var filters []interface{}
 
-	if showFilter.Name != "" {
-		filters = append(filters, showFilter.Name)
-		filterQuery += fmt.Sprintf("name=$%s ", strconv.Itoa(len(filters)))
+		if showFilter.Name != "" {
+			filters = append(filters, showFilter.Name)
+			filterQuery += fmt.Sprintf("name=$%s ", strconv.Itoa(len(filters)))
+		}
+		if showFilter.Type != "" {
+			filters = append(filters, showFilter.Type)
+			filterQuery += fmt.Sprintf("AND typ=$%s ", strconv.Itoa(len(filters)))
+		}
+		if showFilter.TotalEps != nil {
+			filters = append(filters, *showFilter.TotalEps)
+			filterQuery += fmt.Sprintf("AND totalEps>$%s", strconv.Itoa(len(filters)))
+		}
+		filterQuery = strings.TrimPrefix(filterQuery, "AND ")
+		query := baseQuery + filterQuery + ";"
+		logger.InfoLog.Println(query)
+		rows, err = admin.Db.Query(query, filters...)
+	} else {
+		rows, err = admin.Db.Query(baseQuery)
 	}
-	if showFilter.Type != "" {
-		filters = append(filters, showFilter.Type)
-		filterQuery += fmt.Sprintf("AND typ=$%s,", strconv.Itoa(len(filters)))
-	}
-	if showFilter.TotalEps != nil {
-		filters = append(filters, *showFilter.TotalEps)
-		filterQuery += fmt.Sprintf("AND totalEps>$%s", strconv.Itoa(len(filters)))
-	}
-	filterQuery = strings.TrimSuffix(filterQuery, "AND ")
-	query := baseQuery + filterQuery
 
-	rows, err := admin.Db.Query(query, filters...)
+	logger.ErrorLog.Println(err)
+
 	return rows, err
 
 }
@@ -116,6 +140,34 @@ func listShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_listShowHelper(w, rows)
+
+}
+
+func _listShowHelper(w http.ResponseWriter, rows *sql.Rows) {
+	defer rows.Close()
+	var (
+		shows []Show
+		show  Show
+	)
+
+	for rows.Next() {
+		err := rows.Scan(&show.Id, &show.Name, &show.TotalEps, &show.Type)
+		if err != nil {
+			logger.ErrorLog.Println("Error while scanning rows for shows: ", err)
+		}
+		shows = append(shows, show)
+	}
+	err := rows.Err()
+	if err != nil {
+		httpErrors.InternalServerError(w)
+		return
+	}
+	if len(shows) == 0 {
+		httpErrors.NotFound(w, "No Result found")
+		return
+	}
+	w.Header().Set("Content-type", "application/json")
+	_ = json.NewEncoder(w).Encode(shows)
 
 }
 
@@ -179,34 +231,6 @@ func deleteShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, _ = w.Write([]byte("show deleted successfully"))
-
-}
-
-func _listShowHelper(w http.ResponseWriter, rows *sql.Rows) {
-	defer rows.Close()
-	var (
-		shows []Show
-		show  Show
-	)
-
-	for rows.Next() {
-		err := rows.Scan(&show.Id, &show.Name, &show.TotalEps, &show.Type)
-		if err != nil {
-			logger.ErrorLog.Println("Error while scanning rows for shows: ", err)
-		}
-		shows = append(shows, show)
-	}
-	err := rows.Err()
-	if err != nil {
-		if err == sql.ErrNoRows {
-			httpErrors.NotFound(w, "No records available")
-			return
-		}
-		httpErrors.InternalServerError(w)
-		return
-	}
-	w.Header().Set("Content-type", "application/json")
-	_ = json.NewEncoder(w).Encode(shows)
 
 }
 

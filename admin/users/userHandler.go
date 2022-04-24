@@ -154,20 +154,14 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	err = rows.Err()
 	if err != nil {
-		if err == sql.ErrNoRows {
-			httpErrors.NotFound(w, "No records available")
-			return
-		}
 		httpErrors.InternalServerError(w)
 		return
 	}
-	err = json.NewEncoder(w).Encode(usersList)
-	if err != nil {
-		logger.ErrorLog.Println("Error while encoding the data into Json: ", err)
-		httpErrors.InternalServerError(w)
+	if len(usersList) == 0 {
+		httpErrors.NotFound(w, "No records available")
 		return
 	}
-
+	_ = json.NewEncoder(w).Encode(usersList)
 }
 
 func listUser(w http.ResponseWriter, r *http.Request) {
@@ -186,19 +180,12 @@ func listUser(w http.ResponseWriter, r *http.Request) {
 		}
 		logger.ErrorLog.Println(err)
 	}
-	err = json.NewEncoder(w).Encode(map[string]string{"user": user})
-	if err != nil {
-		logger.ErrorLog.Println("Error while encoding the data into Json: ", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
+	_ = json.NewEncoder(w).Encode(map[string]string{"user": user})
 }
 
 func checkCredentials(w http.ResponseWriter, username string, pass string) (isAdmin bool, credValid bool) {
 	isAdmin = false
 	hashedPass := hashPass(pass)
-	// var passFromDb string
 	row := admin.Db.QueryRow("SELECT password, isAdmin FROM lan_show.users WHERE username=$1", username)
 
 	err := row.Scan(&pass, &isAdmin)

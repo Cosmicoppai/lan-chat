@@ -1,7 +1,6 @@
 package show_typ
 
 import (
-	"database/sql"
 	"encoding/json"
 	"lan-chat/admin"
 	"lan-chat/admin/dbErrors"
@@ -40,24 +39,23 @@ func listTypes(w http.ResponseWriter, r *http.Request) {
 		err := rows.Scan(&id, &typ)
 		if err != nil {
 			logger.ErrorLog.Println("Error while scanning show types: ", err)
+			httpErrors.InternalServerError(w)
+			return
 		}
 		showTypes = append(showTypes, ShowType{Id: id, Type: typ})
 	}
 	err = rows.Err()
 	if err != nil {
-		if err == sql.ErrNoRows {
-			httpErrors.NotFound(w, "No records available")
-			return
-		}
 		httpErrors.InternalServerError(w)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(showTypes)
-	if err != nil {
-		logger.ErrorLog.Println("Error while writing json response in listTypes: ", err)
-		httpErrors.InternalServerError(w)
+	if len(showTypes) == 0 {
+		httpErrors.NotFound(w, "No records available")
+		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(showTypes)
+
 }
 
 func addType(w http.ResponseWriter, r *http.Request) {
