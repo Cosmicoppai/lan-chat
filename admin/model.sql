@@ -20,7 +20,7 @@ INSERT INTO show_type (typ) VALUES ('movie'), ( 'series'), ( 'ova') ON CONFLICT 
 
 CREATE TABLE IF NOT EXISTS shows (
     id smallserial PRIMARY KEY ,
-    name varchar(150) NOT NULL UNIQUE,
+    name varchar(150) NOT NULL,
     totalEps smallint NOT NULL CHECK ( totalEps > 0 ),
     typ varchar(30) NOT NULL ,
     FOREIGN KEY(typ) REFERENCES show_type(typ) ON DELETE CASCADE
