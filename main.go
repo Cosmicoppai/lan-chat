@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"lan-chat/admin"
-	"lan-chat/admin/middleware"
 	"lan-chat/admin/show_typ"
 	"lan-chat/admin/users"
 	"lan-chat/chat"
 	"lan-chat/logger"
+	middleware "lan-chat/middleware"
 	"lan-chat/movieHandler"
 	"lan-chat/suggestions"
 	"net"
@@ -19,8 +19,8 @@ import (
 func Server(ip string) {
 	ip = ip + ":80"
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", movieHandler.Home)
-	mux.HandleFunc("/static/", movieHandler.StaticPages)        // endpoint to get static pages
+	mux.HandleFunc("/", TemplateHandler)
+	mux.HandleFunc("/static/", StaticPageHandler)               // endpoint to get static pages
 	mux.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
 	mux.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
 	mux.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
@@ -28,7 +28,7 @@ func Server(ip string) {
 	mux.HandleFunc("/user", users.Handler)
 	mux.HandleFunc("/login", users.Login)
 	mux.HandleFunc("/type", show_typ.Handler)
-	// mux.HandleFunc("/bwahahaha/", admin.Handler)
+	mux.Handle("/bwahahaha/", http.StripPrefix("/bwahahaha", http.HandlerFunc(TemplateHandler)))
 
 	muxWithLogging := middleware.Logger(mux)
 	logger.InfoLog.Printf("Http server is listening on %s", ip)

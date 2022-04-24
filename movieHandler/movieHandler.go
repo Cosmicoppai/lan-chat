@@ -8,29 +8,24 @@ import (
 	"strings"
 )
 
-func StaticPages(w http.ResponseWriter, r *http.Request) { // To serve static pages
-	fileLocation := strings.TrimPrefix(r.URL.Path, "/static/")
-	http.ServeFile(w, r, "./templates/"+fileLocation)
-}
+//type src struct {
+//	videoSrc string
+//	subSrc   string
+//}
 
-func Home(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		httpErrors.MethodNotAllowed(w)
-		return
-	}
-	w.Header().Set("content-type", "text/html")
-	fn := r.URL.Path
-
-	switch fn {
-	case "/":
-		http.ServeFile(w, r, "./templates/index.html")
-	case "/favicon.ico":
-		http.Redirect(w, r, "/static"+fn, 301)
-	default:
-		file := fn + ".html"
-		http.ServeFile(w, r, "./templates/"+file)
-	}
-}
+//func MovieView(w http.ResponseWriter, r *http.Request) {
+//	if r.Method != http.MethodGet {
+//		httpErrors.MethodNotAllowed(w)
+//		return
+//	}
+//	templt := template.Must(template.New("video-template").ParseFiles("templates/movie.html"))
+//	err := templt.Execute(w)
+//	if err != nil {
+//		httpErrors.InternalServerError(w)
+//		return
+//	}
+//	w.WriteHeader(200)
+//}
 
 func GetFile(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {

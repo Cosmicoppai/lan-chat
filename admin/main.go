@@ -14,21 +14,6 @@ import (
 	"strings"
 )
 
-func admin(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/html")
-	http.ServeFile(w, r, "./templates/admin.html")
-}
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	//if r.Header.Get("token") ==
-	switch r.Method {
-	case http.MethodGet:
-		admin(w, r)
-	case http.MethodPost:
-		uploadMovie(w, r)
-	}
-}
-
 func uploadMovie(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(10 << 32) // maximum upload size of 4.2 GB
 	if err != nil {
