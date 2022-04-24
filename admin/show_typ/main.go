@@ -39,14 +39,18 @@ func listTypes(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		err := rows.Scan(&id, &typ)
 		if err != nil {
-			if err == sql.ErrNoRows {
-				httpErrors.NotFound(w, "No show types available")
-				return
-			}
-			httpErrors.InternalServerError(w)
+			logger.ErrorLog.Println("Error while scanning show types: ", err)
+		}
+		showTypes = append(showTypes, ShowType{Id: id, Type: typ})
+	}
+	err = rows.Err()
+	if err != nil {
+		if err == sql.ErrNoRows {
+			httpErrors.NotFound(w, "No records available")
 			return
 		}
-		showTypes = append(showTypes, ShowType{Id: id, Typ: typ})
+		httpErrors.InternalServerError(w)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(showTypes)
@@ -60,12 +64,12 @@ func addType(w http.ResponseWriter, r *http.Request) {
 	var showTyp ShowType
 	err := json.NewDecoder(r.Body).Decode(&showTyp)
 	logger.InfoLog.Println(showTyp)
-	if err != nil || showTyp.Typ == "" {
+	if err != nil || showTyp.Type == "" {
 		logger.ErrorLog.Println("Error while decoding showTyp: ", err)
 		httpErrors.UnProcessableEntry(w)
 		return
 	}
-	_, err = admin.Db.Exec("INSERT INTO lan_show.show_type (typ) VALUES ($1)", showTyp.Typ)
+	_, err = admin.Db.Exec("INSERT INTO lan_show.show_type (typ) VALUES ($1)", showTyp.Type)
 	if err != nil {
 		if dbErrors.InternalServerError(err) {
 			httpErrors.InternalServerError(w)
@@ -85,11 +89,11 @@ func updateTypName(w http.ResponseWriter, r *http.Request) {
 	}
 	var showType ShowType
 	err := json.NewDecoder(r.Body).Decode(&showType)
-	if err != nil || showType.Typ == "" {
+	if err != nil || showType.Type == "" {
 		httpErrors.UnProcessableEntry(w)
 		return
 	}
-	_, err = admin.Db.Exec("UPDATE lan_show.show_type SET typ=$1 WHERE id=$2", showType.Typ, showId)
+	_, err = admin.Db.Exec("UPDATE lan_show.show_type SET typ=$1 WHERE id=$2", showType.Type, showId)
 	if err != nil && dbErrors.InternalServerError(err) {
 		logger.ErrorLog.Println("Error while updating show type: ", err)
 		httpErrors.InternalServerError(w)
