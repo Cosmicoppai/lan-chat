@@ -152,6 +152,15 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 		}
 		usersList["users"] = append(usersList["users"], user)
 	}
+	err = rows.Err()
+	if err != nil {
+		if err == sql.ErrNoRows {
+			httpErrors.NotFound(w, "No records available")
+			return
+		}
+		httpErrors.InternalServerError(w)
+		return
+	}
 	err = json.NewEncoder(w).Encode(usersList)
 	if err != nil {
 		logger.ErrorLog.Println("Error while encoding the data into Json: ", err)
