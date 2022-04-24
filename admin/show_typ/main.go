@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"lan-chat/admin"
 	"lan-chat/admin/dbErrors"
-	"lan-chat/admin/middleware"
 	"lan-chat/httpErrors"
 	"lan-chat/logger"
+	"lan-chat/middleware"
 	"net/http"
 )
 
