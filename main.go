@@ -4,10 +4,11 @@ import (
 	"flag"
 	"lan-chat/admin"
 	"lan-chat/admin/show_typ"
+	"lan-chat/admin/shows"
 	"lan-chat/admin/users"
 	"lan-chat/chat"
 	"lan-chat/logger"
-	middleware "lan-chat/middleware"
+	"lan-chat/middleware"
 	"lan-chat/movieHandler"
 	"lan-chat/suggestions"
 	"net"
@@ -28,6 +29,8 @@ func Server(ip string) {
 	mux.HandleFunc("/user", users.Handler)
 	mux.HandleFunc("/login", users.Login)
 	mux.HandleFunc("/type", show_typ.Handler)
+	mux.HandleFunc("/shows", shows.ListShows)
+	mux.HandleFunc("/show/", shows.Handler)
 	mux.Handle("/bwahahaha/", http.StripPrefix("/bwahahaha", http.HandlerFunc(TemplateHandler)))
 
 	muxWithLogging := middleware.Logger(mux)
