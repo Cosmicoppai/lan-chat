@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lan-chat/audio"
 	"lan-chat/httpErrors"
+	"lan-chat/logger"
 	"net/http"
 	"os"
 )
@@ -13,16 +14,17 @@ const suggestionFilePath = "suggestions/suggestion.txt"
 // FormHandler to accept form-data
 func FormHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		done := make(chan bool) // channel to receive completion of audio.Notify() function
-		_ = r.ParseForm()       // parse the form
+		_ = r.ParseForm() // parse the form
 		movieName := r.Form.Get("movie_name")
 		date := r.Form.Get("date")
 		msg := r.Form.Get("msg")
+		done := make(chan bool) // channel to receive completion of audio.Notify() function
 		if movieName != "" && date != "" {
 			message := fmt.Sprintf("%s has been requested on %s. [ msg:- %s]", movieName, date, msg)
 			go audio.Notify(done)
 			err := writeMessage(message)
 			if err != nil {
+				logger.ErrorLog.Println(err)
 				httpErrors.InternalServerError(w)
 				return
 			}
