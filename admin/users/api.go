@@ -88,7 +88,7 @@ func _deleteUser(w http.ResponseWriter, username string) {
 	return
 }
 
-func updateUsername(w http.ResponseWriter, r *http.Request) {
+func updateUsername(w http.ResponseWriter, r *http.Request) { // admin can't update the username
 	claims := r.Context().Value("claims").(jwt.Claims)
 	username := claims.Sub
 	data := make(map[string]interface{})

@@ -4,6 +4,7 @@ import (
 	"lan-chat/admin/show_typ"
 	"lan-chat/admin/shows"
 	"lan-chat/admin/users"
+	"lan-chat/admin/videos"
 	"lan-chat/movieHandler"
 	"lan-chat/suggestions"
 	"lan-chat/utils"
@@ -22,6 +23,7 @@ var AppRoutes = [][]utils.Route{
 	shows.Routes,
 	users.Routes,
 	show_typ.Routes,
+	videos.Routes,
 
 	// add TemplateHandler at last, otherwise all requests will be routed to serve html files
 	{utils.NewRoute(http.MethodGet, "/(.*)", TemplateHandler("./templates"))},
