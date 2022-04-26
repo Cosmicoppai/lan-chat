@@ -142,7 +142,13 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 func listUser(w http.ResponseWriter, r *http.Request) {
 	username := utils.GetField(r, 0)
 
-	logger.InfoLog.Println(username)
+	requestedBy := r.Context().Value("claims").(jwt.Claims)
+
+	// only process, if request has made by the admin or by the user
+	if !requestedBy.IsAdmin && requestedBy.Sub != username {
+		httpErrors.Forbidden(w)
+		return
+	}
 
 	var user string
 	row := admin.Db.QueryRow("SELECT username FROM lan_show.users where username=$1;", username)
