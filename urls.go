@@ -11,16 +11,18 @@ import (
 )
 
 var Routes = []utils.Route{
-	utils.NewRoute(http.MethodGet, "/", http.HandlerFunc(TemplateHandler)),
-	utils.NewRoute(http.MethodGet, "/static/", http.HandlerFunc(StaticPageHandler)),
+	utils.NewRoute(http.MethodGet, "/static/(.*)", http.HandlerFunc(StaticPageHandler)),
 	utils.NewRoute(http.MethodGet, "/send-suggestion", http.HandlerFunc(suggestions.FormHandler)),
 	utils.NewRoute(http.MethodGet, "/list-movies", http.HandlerFunc(movieHandler.ListVideos)),
-	utils.NewRoute(http.MethodGet, "/file/", http.HandlerFunc(movieHandler.GetFile)),
-	utils.NewRoute(http.MethodGet, "/bwahahaha/", http.StripPrefix("/bwahahaha", http.HandlerFunc(TemplateHandler))),
+	utils.NewRoute(http.MethodGet, "/file/(.*)", http.HandlerFunc(movieHandler.GetFile)),
+	utils.NewRoute(http.MethodGet, "/bwahahaha/(.*)", http.StripPrefix("/bwahahaha", TemplateHandler("./templates/admin"))),
 }
 
 var AppRoutes = [][]utils.Route{
 	shows.Routes,
 	users.Routes,
 	show_typ.Routes,
+
+	// add TemplateHandler at last, otherwise all requests will be routed to serve html files
+	{utils.NewRoute(http.MethodGet, "/(.*)", TemplateHandler("./templates"))},
 }
