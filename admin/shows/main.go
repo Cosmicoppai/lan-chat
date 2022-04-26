@@ -3,32 +3,16 @@ package shows
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"lan-chat/admin"
 	"lan-chat/admin/dbErrors"
 	"lan-chat/httpErrors"
 	"lan-chat/logger"
-	"lan-chat/middleware"
+	"lan-chat/utils"
 	"net/http"
 	"strconv"
 	"strings"
 )
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		http.HandlerFunc(listShow).ServeHTTP(w, r)
-	case http.MethodPost:
-		middleware.AuthMiddleware(http.HandlerFunc(createShow)).ServeHTTP(w, r)
-	case http.MethodPut:
-		middleware.AuthMiddleware(http.HandlerFunc(updateShow)).ServeHTTP(w, r)
-	case http.MethodDelete:
-		middleware.AuthMiddleware(http.HandlerFunc(deleteShow)).ServeHTTP(w, r)
-
-	}
-
-}
 
 func createShow(w http.ResponseWriter, r *http.Request) {
 	var show Show
@@ -57,7 +41,7 @@ func createShow(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ListShows(w http.ResponseWriter, r *http.Request) {
+func listShows(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		httpErrors.MethodNotAllowed(w)
 		return
@@ -98,40 +82,35 @@ func _listFilter(showFilter ShowFilter, baseQuery string, filter bool) (*sql.Row
 		err  error
 	)
 	if filter {
-		filterQuery := ""
+		var filterQuery strings.Builder
 		var filters []interface{}
 
 		if showFilter.Name != "" {
 			filters = append(filters, showFilter.Name)
-			filterQuery += fmt.Sprintf("name=$%s ", strconv.Itoa(len(filters)))
+			filterQuery.WriteString(fmt.Sprintf("name=$%s ", strconv.Itoa(len(filters))))
 		}
 		if showFilter.Type != "" {
 			filters = append(filters, showFilter.Type)
-			filterQuery += fmt.Sprintf("AND typ=$%s ", strconv.Itoa(len(filters)))
+			filterQuery.WriteString(fmt.Sprintf("AND typ=$%s ", strconv.Itoa(len(filters))))
 		}
 		if showFilter.TotalEps != nil {
 			filters = append(filters, *showFilter.TotalEps)
-			filterQuery += fmt.Sprintf("AND totalEps>$%s", strconv.Itoa(len(filters)))
+			filterQuery.WriteString(fmt.Sprintf("AND totalEps>$%s", strconv.Itoa(len(filters))))
 		}
-		filterQuery = strings.TrimPrefix(filterQuery, "AND ")
-		query := baseQuery + filterQuery + ";"
+		fQ := strings.TrimPrefix(filterQuery.String(), "AND ")
+		query := baseQuery + fQ + ";"
 		logger.InfoLog.Println(query)
 		rows, err = admin.Db.Query(query, filters...)
 	} else {
 		rows, err = admin.Db.Query(baseQuery)
 	}
 
-	logger.ErrorLog.Println(err)
-
 	return rows, err
 
 }
 
 func listShow(w http.ResponseWriter, r *http.Request) {
-	id, err := getId(w, r)
-	if err != nil {
-		return
-	}
+	id, _ := strconv.ParseInt(utils.GetField(r, 0), 10, 64)
 
 	rows, err := admin.Db.Query("SELECT * FROM lan_show.shows WHERE id=$1;", id)
 	if err != nil && dbErrors.InternalServerError(err) {
@@ -172,12 +151,9 @@ func _listShowHelper(w http.ResponseWriter, rows *sql.Rows) {
 }
 
 func updateShow(w http.ResponseWriter, r *http.Request) {
-	id, err := getId(w, r)
-	if err != nil {
-		return
-	}
+	id, _ := strconv.ParseInt(utils.GetField(r, 0), 10, 64)
 	var showInfo Show
-	err = json.NewDecoder(r.Body).Decode(&showInfo)
+	err := json.NewDecoder(r.Body).Decode(&showInfo)
 	if err != nil {
 		httpErrors.BadRequest(w, "invalid json")
 		return
@@ -192,23 +168,23 @@ func updateShow(w http.ResponseWriter, r *http.Request) {
 
 func _updateShow(w http.ResponseWriter, show Show) {
 	baseQuery := "UPDATE lan_show.shows SET %s WHERE id=$1;"
-	filterQuery := ""
+	var filterQuery strings.Builder
 	filters := []interface{}{*show.Id}
 
 	if show.Name != "" {
 		filters = append(filters, show.Name)
-		filterQuery += fmt.Sprintf("name=$%s,", strconv.Itoa(len(filters)))
+		filterQuery.WriteString(fmt.Sprintf("name=$%s,", strconv.Itoa(len(filters))))
 	}
 	if show.Type != "" {
 		filters = append(filters, show.Type)
-		filterQuery += fmt.Sprintf("typ=$%s,", strconv.Itoa(len(filters)))
+		filterQuery.WriteString(fmt.Sprintf("typ=$%s,", strconv.Itoa(len(filters))))
 	}
 	if show.TotalEps != nil {
 		filters = append(filters, *show.TotalEps)
-		filterQuery += fmt.Sprintf("totalEps=$%s", strconv.Itoa(len(filters)))
+		filterQuery.WriteString(fmt.Sprintf("totalEps=$%s", strconv.Itoa(len(filters))))
 	}
-	filterQuery = strings.TrimSuffix(filterQuery, ",")
-	query := fmt.Sprintf(baseQuery, filterQuery)
+	fQ := strings.TrimSuffix(filterQuery.String(), ",")
+	query := fmt.Sprintf(baseQuery, fQ)
 
 	_, err := admin.Db.Exec(query, filters...)
 	if err != nil && dbErrors.InternalServerError(err) {
@@ -220,11 +196,8 @@ func _updateShow(w http.ResponseWriter, show Show) {
 }
 
 func deleteShow(w http.ResponseWriter, r *http.Request) {
-	id, err := getId(w, r)
-	if err != nil {
-		return
-	}
-	_, err = admin.Db.Query("DELETE FROM lan_show.shows WHERE id=$1", id)
+	id, _ := strconv.ParseInt(utils.GetField(r, 0), 10, 64)
+	_, err := admin.Db.Query("DELETE FROM lan_show.shows WHERE id=$1", id)
 	if err != nil && dbErrors.InternalServerError(err) {
 		logger.ErrorLog.Println(err)
 		httpErrors.InternalServerError(w)
@@ -232,19 +205,4 @@ func deleteShow(w http.ResponseWriter, r *http.Request) {
 	}
 	_, _ = w.Write([]byte("show deleted successfully"))
 
-}
-
-func getId(w http.ResponseWriter, r *http.Request) (int64, error) {
-	uri := strings.Trim(r.RequestURI, "/")
-	pathParams := strings.Split(uri, "/")
-	if len(pathParams) < 2 {
-		httpErrors.BadRequest(w, "id not present")
-		return 0, errors.New("id not present")
-	}
-	id, err := strconv.ParseInt(pathParams[1], 10, 64)
-	if err != nil {
-		httpErrors.BadRequest(w, "Invalid Id")
-		return 0, err
-	}
-	return id, nil
 }

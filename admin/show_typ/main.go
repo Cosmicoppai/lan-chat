@@ -6,22 +6,8 @@ import (
 	"lan-chat/admin/dbErrors"
 	"lan-chat/httpErrors"
 	"lan-chat/logger"
-	"lan-chat/middleware"
 	"net/http"
 )
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		http.HandlerFunc(listTypes).ServeHTTP(w, r)
-	case http.MethodPost:
-		middleware.AuthMiddleware(http.HandlerFunc(addType)).ServeHTTP(w, r)
-	case http.MethodPut:
-		middleware.AuthMiddleware(http.HandlerFunc(updateTypName)).ServeHTTP(w, r)
-	case http.MethodDelete:
-		middleware.AuthMiddleware(http.HandlerFunc(deleteType)).ServeHTTP(w, r)
-	}
-}
 
 func listTypes(w http.ResponseWriter, r *http.Request) {
 	rows, err := admin.Db.Query("SELECT id, typ FROM lan_show.show_type;")

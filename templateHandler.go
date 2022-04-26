@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// StaticPageHandler to get static pages
 func StaticPageHandler(w http.ResponseWriter, r *http.Request) { // To serve static pages
 	fileLocation := strings.TrimPrefix(r.URL.Path, "/static/")
 	http.ServeFile(w, r, "./templates/"+fileLocation)

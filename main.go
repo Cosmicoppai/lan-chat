@@ -3,14 +3,11 @@ package main
 import (
 	"flag"
 	"lan-chat/admin"
-	"lan-chat/admin/show_typ"
-	"lan-chat/admin/shows"
 	"lan-chat/admin/users"
 	"lan-chat/chat"
 	"lan-chat/logger"
 	"lan-chat/middleware"
-	"lan-chat/movieHandler"
-	"lan-chat/suggestions"
+	"lan-chat/utils"
 	"net"
 	"net/http"
 	"os"
@@ -19,21 +16,13 @@ import (
 
 func Server(ip string) {
 	ip = ip + ":80"
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", TemplateHandler)
-	mux.HandleFunc("/static/", StaticPageHandler)               // endpoint to get static pages
-	mux.HandleFunc("/send-suggestion", suggestions.FormHandler) // to accept form-data
-	mux.HandleFunc("/list-movies", movieHandler.ListVideos)     // get the json response of current streaming movies
-	mux.HandleFunc("/file/", movieHandler.GetFile)              // endpoint to get movie
-	mux.Handle("/users", middleware.AdminMiddleware(http.HandlerFunc(users.ListUsers)))
-	mux.HandleFunc("/user", users.Handler)
-	mux.HandleFunc("/login", users.Login)
-	mux.HandleFunc("/type", show_typ.Handler)
-	mux.HandleFunc("/shows", shows.ListShows)
-	mux.HandleFunc("/show/", shows.Handler)
-	mux.Handle("/bwahahaha/", http.StripPrefix("/bwahahaha", http.HandlerFunc(TemplateHandler)))
+	if len(AppRoutes) > 0 {
+		for _, routes := range AppRoutes {
+			Routes = append(Routes, routes...)
+		}
+	}
 
-	muxWithLogging := middleware.Logger(mux)
+	muxWithLogging := middleware.Logger(utils.Router(Routes))
 	logger.InfoLog.Printf("Http server is listening on %s", ip)
 
 	srv := &http.Server{

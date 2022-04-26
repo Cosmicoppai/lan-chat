@@ -11,27 +11,11 @@ import (
 	"lan-chat/admin/jwt"
 	"lan-chat/httpErrors"
 	"lan-chat/logger"
-	"lan-chat/middleware"
+	"lan-chat/utils"
 	"net/http"
 	"strings"
 	"time"
 )
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-
-	switch r.Method {
-	case http.MethodPost:
-		middleware.AdminMiddleware(http.HandlerFunc(registerUser)).ServeHTTP(w, r)
-	case http.MethodGet:
-		middleware.AuthMiddleware(http.HandlerFunc(listUser)).ServeHTTP(w, r)
-	case http.MethodPut:
-		middleware.AuthMiddleware(http.HandlerFunc(updateUsername)).ServeHTTP(w, r)
-	case http.MethodDelete:
-		middleware.AuthMiddleware(http.HandlerFunc(deleteUser)).ServeHTTP(w, r)
-	}
-
-	// return http.HandlerFunc(fn)
-}
 
 func registerUser(w http.ResponseWriter, r *http.Request) { // only admin can register a user
 	user := User{}
@@ -55,12 +39,7 @@ func registerUser(w http.ResponseWriter, r *http.Request) { // only admin can re
 	w.WriteHeader(http.StatusCreated)
 }
 
-func Login(w http.ResponseWriter, r *http.Request) { // anyone with their account can Log In
-
-	if r.Method != http.MethodPost {
-		httpErrors.MethodNotAllowed(w)
-		return
-	}
+func login(w http.ResponseWriter, r *http.Request) { // anyone with their account can Log In
 
 	cred := r.Header.Get("Authorization")
 	if cred != "" && strings.HasPrefix(cred, "Basic") {
@@ -88,11 +67,7 @@ func Login(w http.ResponseWriter, r *http.Request) { // anyone with their accoun
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
-	if username == "" {
-		httpErrors.BadRequest(w)
-		return
-	}
+	username := utils.GetField(r, 0)
 	requestedBy := r.Context().Value("claims").(jwt.Claims)
 	if requestedBy.IsAdmin || (requestedBy.Sub == username) { // if the request has been made by admin or the user itself
 		_deleteUser(w, username)
@@ -135,7 +110,7 @@ func updateUsername(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ListUsers(w http.ResponseWriter, r *http.Request) {
+func listUsers(w http.ResponseWriter, r *http.Request) {
 	usersList := map[string][]string{"users": {}}
 	var user string
 	rows, err := admin.Db.Query("SELECT username FROM lan_show.users;")
@@ -165,11 +140,10 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func listUser(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
-	if username == "" {
-		httpErrors.BadRequest(w)
-		return
-	}
+	username := utils.GetField(r, 0)
+
+	logger.InfoLog.Println(username)
+
 	var user string
 	row := admin.Db.QueryRow("SELECT username FROM lan_show.users where username=$1;", username)
 	err := row.Scan(&user)

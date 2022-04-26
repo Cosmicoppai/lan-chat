@@ -10,6 +10,7 @@ import (
 
 const suggestionFilePath = "suggestions/suggestion.txt"
 
+// FormHandler to accept form-data
 func FormHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		done := make(chan bool) // channel to receive completion of audio.Notify() function

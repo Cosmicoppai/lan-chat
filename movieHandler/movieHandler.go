@@ -27,6 +27,7 @@ import (
 //	w.WriteHeader(200)
 //}
 
+// GetFile to GET movie, sub and poster files
 func GetFile(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		httpErrors.MethodNotAllowed(w)
@@ -77,6 +78,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ListVideos to get the json response of current streaming movies
 func ListVideos(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		httpErrors.MethodNotAllowed(w)

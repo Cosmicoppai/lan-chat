@@ -28,31 +28,28 @@ func checkAuthorization(w http.ResponseWriter, r *http.Request) (jwt.Claims, err
 	return jwt.Claims{}, jwt.InvalidToken
 }
 
-func AuthMiddleware(next http.Handler) http.Handler {
+func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		claims, err := checkAuthorization(w, r)
 		if err == nil {
 			ctxWithUser := context.WithValue(r.Context(), "claims", claims)
 			r = r.WithContext(ctxWithUser)
-			next.ServeHTTP(w, r)
+			http.HandlerFunc(next).ServeHTTP(w, r)
 		}
 	}
 	return http.HandlerFunc(fn)
 }
 
-func AdminMiddleware(next http.Handler) http.Handler {
+func AdminMiddleware(next func(http.ResponseWriter, *http.Request)) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		claims, err := checkAuthorization(w, r)
-		if err == nil {
-			if claims.IsAdmin {
-				ctxWithUser := context.WithValue(r.Context(), "claims", claims)
-				r = r.WithContext(ctxWithUser)
-				next.ServeHTTP(w, r)
-			} else {
-				httpErrors.Forbidden(w)
-				return
-			}
+		if err != nil && claims.IsAdmin {
+			httpErrors.Forbidden(w)
+			return
 		}
+		ctxWithUser := context.WithValue(r.Context(), "claims", claims)
+		r = r.WithContext(ctxWithUser)
+		http.HandlerFunc(next).ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
 }
